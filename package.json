@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@apollo/client": "^4.1.0",
+    "@apollo/client": "^4.1.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^5.2.2",
@@ -26,8 +26,8 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
+    "@types/node": "^20.19.30",
+    "@types/react": "^19.2.9",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
