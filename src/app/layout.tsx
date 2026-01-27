@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ApolloClientProvider } from "@/providers/ApolloProvider";
-import { AppLayout } from "@/components/layout/MainLayout";
-
+import { AppLayout } from "@/widgets/app-layout/AppLayout";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

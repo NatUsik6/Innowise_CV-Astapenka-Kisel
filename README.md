@@ -18,6 +18,7 @@ https://curriculum-vitae-project.notion.site/Introduction-c27698dce4214730b20f08
 1. Clone a repository `https://github.com/NatUsik6/Innowise_CV-Astapenka-Kisel.git`
 2. Install Dependencies: `npm install`
 3. Run the project `npm run dev`
+4. Deploy link `https://vercel.com/natalis-projects-dd9aaf99/innowise-cv-astapenka-kisel`
 
 The application will be available at http://localhost:3000 .
 
