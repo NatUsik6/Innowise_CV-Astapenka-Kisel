@@ -7,7 +7,7 @@ import MovingIcon from '@mui/icons-material/Moving';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import TranslateIcon from '@mui/icons-material/Translate';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { RootWrapper, SidebarWrapper, MainContent, NavItem } from './StyledLayout';
+import { RootWrapper, SidebarWrapper, MainContent, NavItem, UserSection, UserAvatar, BottomActions, BackButton, UserName } from './StyledLayout';
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -33,29 +33,16 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
             </NavItem>
           </List>
         </Box>
-
         <Box>
-          <Box sx={{ 
-            p: '0 1rem', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.875rem',
-            mb: '0.875rem'
-          }}>
-            <Avatar sx={{ bgcolor: '#c62828', width: '2rem', height: '2rem', fontSize: '0.8rem' }}>R</Avatar>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              Rostislav Harlanov
-            </Typography>
-          </Box>
-          
-          <Box sx={{ px: '16px' }}>
-            <IconButton 
-              size="small" 
-              sx={{ color: 'rgba(255, 255, 255, 0.7)', p: 0 }}
-            >
-              <ArrowBackIosNewIcon sx={{ fontSize: '1.2rem' }} />
-            </IconButton>
-          </Box>
+          <UserSection>
+            <UserAvatar>R</UserAvatar>
+            <UserName variant="body2">Rostislav Harlanov</UserName>
+          </UserSection>
+          <BottomActions>
+            <BackButton size="small">
+              <ArrowBackIosNewIcon />
+            </BackButton>
+          </BottomActions>
         </Box>
       </SidebarWrapper>
 
