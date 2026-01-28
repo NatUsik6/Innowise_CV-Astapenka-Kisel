@@ -2,12 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
-
-import { USERS_QUERY } from '@/entities/user/model/queries';
 import { User } from '@/entities/user/model/types';
+import { USERS_QUERY } from '@/entities/user/api/queries';
+import { UsersHeader, UsersTable } from '@/features/users';
 
-import { UsersHeader } from '@/widgets/users/UsersHeader/UsersHeader';
-import { UsersTable } from '@/widgets/users/UsersTable/UsersTable';
+
 
 type UsersQueryResponse = {
   users: User[];

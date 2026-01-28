@@ -8,12 +8,13 @@ export type User = {
   id: string;
   email: string;
   role: 'admin' | 'user';
-
   department: string;
   department_name: string;
-
   position: string;
   position_name: string;
-
   profile: UserProfile;
+};
+
+export type UsersQueryResult = {
+  users: User[];
 };

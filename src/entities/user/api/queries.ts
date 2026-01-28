@@ -6,13 +6,10 @@ export const USERS_QUERY = gql`
       id
       email
       role
-
       department
       department_name
-
       position
       position_name
-
       profile {
         first_name
         last_name
@@ -28,13 +25,10 @@ export const USER_QUERY = gql`
       id
       email
       role
-
       department
       department_name
-
       position
       position_name
-
       profile {
         first_name
         last_name
