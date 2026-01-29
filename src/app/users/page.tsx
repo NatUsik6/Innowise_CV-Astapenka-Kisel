@@ -1,56 +1,71 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useQuery } from '@apollo/client/react';
-import { User } from '@/entities/user/model/types';
-import { USERS_QUERY } from '@/entities/user/api/queries';
-import { UsersHeader, UsersTable } from '@/features/users';
-
-
-
-type UsersQueryResponse = {
-  users: User[];
-};
+import { useState } from 'react';
+import { SearchInput } from '@/features/search-users/ui/SearchInput';
+import { UsersTable } from '../widgets/users-table/ui/UsersTable';
+import { EmployeesHeader } from '../widgets/users-header/ui/EmployeesHeader';
 
 export default function UsersPage() {
-  const role: 'admin' | 'user' = 'admin'; // потом из auth
-  const currentUserId = '1';
-
-  const { data, loading, error } =
-    useQuery<UsersQueryResponse>(USERS_QUERY);
-
   const [search, setSearch] = useState('');
-
-  if (loading) return <div>Loading...</div>;
-
-  if (error) {
-    console.error(error);
-    return <div>Error: {error.message}</div>;
-  }
-
-  const users = data?.users ?? [];
-
-  const filteredUsers = useMemo(() => {
-    return users.filter((u) =>
-      `${u.profile.first_name} ${u.profile.last_name}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
-  }, [users, search]);
 
   return (
     <>
-      <UsersHeader
-        role={role}
-        search={search}
-        onSearchChange={setSearch}
-      />
-
-      <UsersTable
-        users={filteredUsers}
-        role={role}
-        currentUserId={currentUserId}
-      />
+      <EmployeesHeader />
+      <SearchInput value={search} onChange={setSearch} />
+      <UsersTable search={search} />
     </>
   );
 }
+// 'use client';
+
+// import { useState } from 'react';
+// import { Box } from '@mui/material';
+
+// import { SearchInput } from '@/features/search-users/ui/SearchInput';
+// import { CreateUserButton } from '@/features/admin-users/ui/CreateUserButton';
+// import { useAdminUsers } from '@/features/admin-users/model/useAdminUsers';
+// import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
+// import { UsersTable } from '../widgets/users-table/ui/UsersTable';
+// import { EmployeesHeader } from '../widgets/users-header/ui/EmployeesHeader';
+
+// export default function UsersPage() {
+//   const [search, setSearch] = useState('');
+//   const isAdmin = true;
+
+//   const {
+//     users,
+//     open,
+//     user,
+//     mode,
+//     openCreate,
+//     openUpdate,
+//     closeModal,
+//     submitUser,
+//   } = useAdminUsers();
+
+//   return (
+//     <>
+//       <EmployeesHeader />
+
+//       <Box sx={{ display: 'flex', alignItems: 'center' }}>
+//         <SearchInput value={search} onChange={setSearch} />
+//         {isAdmin && <CreateUserButton onClick={openCreate} />}
+//       </Box>
+
+//       <UsersTable
+//         search={search}
+//         users={users}
+//         isAdmin={isAdmin}
+//         onAdminUpdate={openUpdate}
+//       />
+
+//       <UpdateUserModal
+//         open={open}
+//         user={user}
+//         mode={mode}
+//         onClose={closeModal}
+//         onSubmit={submitUser}
+//       />
+//     </>
+//   );
+// }

@@ -1,20 +1,14 @@
-export type UserProfile = {
-  first_name: string;
-  last_name: string;
-  avatar?: string | null;
-};
+export type UserRole = 'USER' | 'ADMIN';
 
-export type User = {
+export interface User {
   id: string;
   email: string;
-  role: 'admin' | 'user';
+  firstName: string;
+  lastName: string;
   department: string;
   department_name: string;
   position: string;
   position_name: string;
-  profile: UserProfile;
-};
-
-export type UsersQueryResult = {
-  users: User[];
-};
+  role: UserRole;
+  avatar?: string;
+}
