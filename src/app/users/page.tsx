@@ -2,18 +2,24 @@
 
 import { useState } from 'react';
 import { Box } from '@mui/material';
-
 import { SearchInput } from '@/features/search-users/ui/SearchInput';
 import { useSession } from '@/entities/session/model/useSession';
-import { EmployeesHeader } from '../widgets/users-header/ui/EmployeesHeader';
 import { CreateUserButton } from '@/features/admin-users/ui/CreateUserButton';
+import { User } from '@/entities/user/model/types';
+import { EmployeesHeader } from '../widgets/users-header/ui/EmployeesHeader';
 import { AdminUsersTable } from '../widgets/users-table/admin/AdminUsersTable';
 import { UserUsersTable } from '../widgets/users-table/user/UserUsersTable';
-
+import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
 
 export default function UsersPage() {
-  const [search, setSearch] = useState('');
   const { user } = useSession();
+  const [search, setSearch] = useState('');
+  const [openCreate, setOpenCreate] = useState(false);
+
+  const handleCreate = (newUser: User & { password: string }) => {
+    console.log('CREATE USER', newUser);
+    setOpenCreate(false); 
+  };
 
   return (
     <>
@@ -22,19 +28,15 @@ export default function UsersPage() {
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 3,
         }}
       >
         <SearchInput value={search} onChange={setSearch} />
 
         {user.role === 'ADMIN' && (
-          <CreateUserButton
-            onClick={() => {
-              console.log('open create user modal');
-            }}
-          />
+          <CreateUserButton onClick={() => setOpenCreate(true)} />
         )}
       </Box>
 
@@ -43,6 +45,12 @@ export default function UsersPage() {
       ) : (
         <UserUsersTable search={search} />
       )}
+
+      <CreateUserModal
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSubmit={handleCreate}
+      />
     </>
   );
 }

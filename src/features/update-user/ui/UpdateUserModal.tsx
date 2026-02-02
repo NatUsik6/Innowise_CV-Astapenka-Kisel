@@ -35,6 +35,7 @@ export const UpdateUserModal = ({
     form,
     handleInputChange,
     handleSelectChange,
+    isDirty,
   } = useUpdateUserForm(user);
 
   const [password, setPassword] = useState('');
@@ -47,7 +48,6 @@ export const UpdateUserModal = ({
       ...(password ? { password } : {}),
     });
   };
-
   return (
     <Dialog
       open={open}
@@ -176,16 +176,25 @@ export const UpdateUserModal = ({
         <Button
           variant="contained"
           onClick={handleSubmit}
+          disabled={!isDirty && !password}
           sx={{
-            backgroundColor: '#5b5b5b',
-            color: '#c6c6c6',
+            backgroundColor:
+              isDirty || password ? '#e53935' : '#5b5b5b',
+            color:
+              isDirty || password ? '#fff' : '#c6c6c6',
             borderRadius: '30px',
             width: 150,
+            '&:hover': {
+              backgroundColor:
+                isDirty || password ? '#d32f2f' : '#5b5b5b',
+            },
           }}
         >
           Update
         </Button>
+
       </DialogActions>
+
     </Dialog>
   );
 };
