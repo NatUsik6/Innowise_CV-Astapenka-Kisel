@@ -1,43 +1,86 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-} from '@mui/material';
+import { IconButton, Menu, MenuItem, } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { UsersTable } from '../ui/UsersTable';
 import { User } from '@/entities/user/model/types';
 import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
 import { DeleteUserModal } from '@/features/delete-user/ui/DeleteUserModal';
+import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
 import { mockUsers } from '@/entities/user/model/mock';
+
+interface Props {
+  search: string;
+  onUserCreated?: (user: User & { password: string }) => void;
+  createModalOpen?: boolean;
+  onCloseCreateModal?: () => void;
+}
 
 export const AdminUsersTable = ({
   search,
-}: {
-  search: string;
-}) => {
-  const [users, setUsers] =
-    useState<User[]>(mockUsers);
-
-  const [menuEl, setMenuEl] =
-    useState<HTMLElement | null>(null);
-
-  const [activeUser, setActiveUser] =
-    useState<User | null>(null);
-
-  const [openUpdate, setOpenUpdate] =
-    useState(false);
-
-  const [openDelete, setOpenDelete] =
-    useState(false);
+  onUserCreated,
+  createModalOpen,
+  onCloseCreateModal,
+}: Props) => {
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [menuEl, setMenuEl] = useState<HTMLElement | null>(null);
+  const [activeUser, setActiveUser] = useState<User | null>(null);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [internalOpenCreate, setInternalOpenCreate] = useState(false);
+  const isCreateModalControlled = createModalOpen !== undefined;
+  const openCreate = isCreateModalControlled ? createModalOpen : internalOpenCreate;
 
   const openMenu = Boolean(menuEl);
-
   const closeMenu = () => {
     setMenuEl(null);
+  };
+
+  const handleUpdateUser = (updated: User & { password?: string }) => {
+    setUsers(prev =>
+      prev.map(u =>
+        u.id === updated.id ? updated : u
+      )
+    );
+    setOpenUpdate(false);
+  };
+
+  const handleDeleteUser = () => {
+    if (!activeUser) return;
+
+    setUsers(prev =>
+      prev.filter(u => u.id !== activeUser.id)
+    );
+
+    setOpenDelete(false);
+  };
+  const handleCreateUser = (newUser: User & { password: string }) => {
+    const userToAdd = {
+      ...newUser,
+      id: crypto.randomUUID(),
+    };
+
+    setUsers(prev => [...prev, userToAdd]);
+
+    if (isCreateModalControlled && onCloseCreateModal) {
+      onCloseCreateModal();
+    } else {
+      setInternalOpenCreate(false);
+    }
+
+    if (onUserCreated) {
+      onUserCreated(newUser);
+    }
+  };
+
+  const handleCloseCreateModal = () => {
+    if (isCreateModalControlled && onCloseCreateModal) {
+      onCloseCreateModal();
+    } else {
+      setInternalOpenCreate(false);
+    }
   };
 
   const renderActions = (user: User) => (
@@ -101,27 +144,20 @@ export const AdminUsersTable = ({
         open={openUpdate}
         user={activeUser}
         onClose={() => setOpenUpdate(false)}
-        onSubmit={updated =>
-          setUsers(prev =>
-            prev.map(u =>
-              u.id === updated.id ? updated : u
-            )
-          )
-        }
+        onSubmit={handleUpdateUser}
       />
 
       <DeleteUserModal
         open={openDelete}
         user={activeUser}
         onClose={() => setOpenDelete(false)}
-        onConfirm={() => {
-          setUsers(prev =>
-            prev.filter(
-              u => u.id !== activeUser?.id
-            )
-          );
-          setOpenDelete(false);
-        }}
+        onConfirm={handleDeleteUser}
+      />
+
+      <CreateUserModal
+        open={openCreate}
+        onClose={handleCloseCreateModal}
+        onSubmit={handleCreateUser}
       />
     </>
   );

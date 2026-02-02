@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Dialog,
   DialogTitle,
@@ -8,30 +9,30 @@ import {
   DialogActions,
   Button,
   Box,
-  MenuItem,
   IconButton,
+  MenuItem,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { User } from '@/entities/user/model/types';
+import { createUserSchema } from '../model/createUserSchema';
 import { StyledTextField } from '@/features/update-user/ui/fields/StyledTextField';
 import { StyledSelect } from '@/features/update-user/ui/fields/StyledSelect';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: User & { password: string }) => void;
+  onSubmit: (user: User & { password: string }) => void;
 }
 
-const emptyForm = {
-  email: '',
-  firstName: '',
-  lastName: '',
-  department: '',
-  department_name: '',
-  position: '',
-  position_name: '',
-  role: 'USER' as const,
+type FormValues = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  department_name?: string;
+  position_name?: string;
+  role?: 'USER' | 'ADMIN';
 };
 
 export const CreateUserModal = ({
@@ -39,45 +40,45 @@ export const CreateUserModal = ({
   onClose,
   onSubmit,
 }: Props) => {
-  const [form, setForm] = useState(emptyForm);
-  const [password, setPassword] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    watch,
+    setValue,
+    reset,
+  } = useForm<FormValues>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      department_name: '',
+      position_name: '',
+      role: 'USER',
+    },
+  });
 
-  useEffect(() => {
-    if (open) {
-      setForm(emptyForm);
-      setPassword('');
-    }
-  }, [open]);
+  const password = watch('password');
 
-  const isDirty =
-    form.email.trim() !== '' ||
-    form.firstName.trim() !== '' ||
-    form.lastName.trim() !== '' ||
-    form.department_name.trim() !== '' ||
-    form.position_name.trim() !== '' ||
-    password.trim() !== '';
+  const submitHandler = (data: FormValues) => {
+    const newUser: User & { password: string } = {
+      id: crypto.randomUUID(),
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      password: data.password,
+      role: data.role ?? 'USER',
 
-  const handleInputChange = (field: keyof typeof form) => (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setForm(prev => ({ ...prev, [field]: e.target.value }));
-  };
-
-  const handleSelectChange = (field: keyof typeof form) => (
-    e: any
-  ) => {
-    setForm(prev => ({ ...prev, [field]: e.target.value }));
-  };
-
-  const handleSubmit = () => {
-    if (!isDirty) return;
-        const newUser: User & { password: string } = {
-      ...form,
-      id: crypto.randomUUID(), 
-      password,
+      department: data.department_name ?? '',
+      department_name: data.department_name ?? '',
+      position: data.position_name ?? '',
+      position_name: data.position_name ?? '',
     };
-    
+
     onSubmit(newUser);
+    reset();
   };
 
   return (
@@ -97,106 +98,140 @@ export const CreateUserModal = ({
       <DialogTitle
         sx={{
           display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
+          pr: 2,
         }}
       >
         Create user
+
         <IconButton onClick={onClose} sx={{ color: '#bdbdbd' }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 3,
-            mt: 1,
-          }}
+      <form onSubmit={handleSubmit(submitHandler)}>
+        <DialogContent>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 3,
+              mt: 1,
+            }}
+          >
+            <StyledTextField
+              label="Email"
+              {...register('email')}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+
+            <StyledTextField
+              label="Password"
+              type="password"
+              {...register('password')}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            />
+
+            <StyledTextField
+              label="First Name"
+              {...register('firstName')}
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            />
+
+            <StyledTextField
+              label="Last Name"
+              {...register('lastName')}
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            />
+
+            <StyledSelect
+              label="Department"
+              value={watch('department_name') ?? ''}
+              onChange={e =>
+                setValue('department_name', e.target.value, {
+                  shouldDirty: true,
+                })
+              }
+            >
+              <MenuItem value="React">React</MenuItem>
+              <MenuItem value=".NET">.NET</MenuItem>
+              <MenuItem value="Java">Java</MenuItem>
+            </StyledSelect>
+
+            <StyledSelect
+              label="Position"
+              value={watch('position_name') ?? ''}
+              onChange={e =>
+                setValue('position_name', e.target.value, {
+                  shouldDirty: true,
+                })
+              }
+            >
+              <MenuItem value="Software Engineer">
+                Software Engineer
+              </MenuItem>
+              <MenuItem value="Data Analyst">
+                Data Analyst
+              </MenuItem>
+            </StyledSelect>
+
+            <StyledSelect
+              label="Role"
+              value={watch('role') ?? 'USER'}
+              onChange={e =>
+                setValue('role', e.target.value as 'USER' | 'ADMIN', {
+                  shouldDirty: true,
+                })
+              }
+            >
+              <MenuItem value="USER">User</MenuItem>
+              <MenuItem value="ADMIN">Admin</MenuItem>
+            </StyledSelect>
+          </Box>
+        </DialogContent>
+
+        <DialogActions
+          sx={{ p: 3, gap: 1, justifyContent: 'flex-end' }}
         >
-          <StyledTextField
-            label="Email"
-            value={form.email}
-            onChange={handleInputChange('email')}
-            required
-          />
-
-          <StyledTextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-
-          <StyledTextField
-            label="First Name"
-            value={form.firstName}
-            onChange={handleInputChange('firstName')}
-          />
-
-          <StyledTextField
-            label="Last Name"
-            value={form.lastName}
-            onChange={handleInputChange('lastName')}
-          />
-
-          <StyledSelect
-            label="Department"
-            value={form.department_name}
-            onChange={handleSelectChange('department_name')}
+          <Button
+            onClick={onClose}
+            variant="outlined"
+            sx={{
+              color: '#bdbdbd',
+              borderColor: '#bdbdbd',
+              borderRadius: '30px',
+              width: 150,
+            }}
           >
-            <MenuItem value="React">React</MenuItem>
-            <MenuItem value=".NET">.NET</MenuItem>
-            <MenuItem value="Java">Java</MenuItem>
-          </StyledSelect>
+            Cancel
+          </Button>
 
-          <StyledSelect
-            label="Position"
-            value={form.position_name}
-            onChange={handleSelectChange('position_name')}
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!isDirty || !password}
+            sx={{
+              backgroundColor:
+                isDirty && password ? '#e53935' : '#5b5b5b',
+              color:
+                isDirty && password ? '#fff' : '#c6c6c6',
+              borderRadius: '30px',
+              width: 150,
+              '&:hover': {
+                backgroundColor:
+                  isDirty && password ? '#d32f2f' : '#5b5b5b',
+              },
+            }}
           >
-            <MenuItem value="Software Engineer">
-              Software Engineer
-            </MenuItem>
-            <MenuItem value="Data Analyst">
-              Data Analyst
-            </MenuItem>
-            <MenuItem value="Product Manager">
-              Product Manager
-            </MenuItem>
-          </StyledSelect>
-
-          <StyledSelect
-            label="Role"
-            value={form.role}
-            onChange={handleSelectChange('role')}
-          >
-            <MenuItem value="USER">User</MenuItem>
-            <MenuItem value="ADMIN">Admin</MenuItem>
-          </StyledSelect>
-        </Box>
-      </DialogContent>
-
-      <DialogActions sx={{ p: 3 }}>
-        <Button
-          variant="contained"
-          disabled={!isDirty}
-          onClick={handleSubmit}
-          sx={{
-            backgroundColor: isDirty ? '#e53935' : '#5b5b5b',
-            color: isDirty ? '#fff' : '#c6c6c6',
-            borderRadius: '30px',
-            width: 150,
-            '&:hover': {
-              backgroundColor: isDirty ? '#d32f2f' : '#5b5b5b',
-            },
-          }}
-        >
-          Create
-        </Button>
-      </DialogActions>
+            Create
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };
