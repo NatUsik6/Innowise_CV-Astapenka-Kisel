@@ -9,6 +9,7 @@ import {
   TableContainer,
   Paper,
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 import { User } from '@/entities/user/model/types';
 import { UserAvatar } from '@/entities/user/ui/UserAvatar';
@@ -25,12 +26,17 @@ export const UsersTable = ({
   search,
   renderActions,
 }: Props) => {
+  const router = useRouter();
   const {
     users,
     sortField,
     sortOrder,
     handleSort,
   } = useUsersTable(initialUsers, search);
+
+  const handleRowClick = (user: User) => {
+    router.push(`/users/${user.id}/profile`);
+  };
 
   const renderArrow = (field: SortField) => {
     if (sortField === field) {
@@ -94,7 +100,17 @@ export const UsersTable = ({
 
         <TableBody>
           {users.map(user => (
-            <TableRow key={user.id} hover>
+            <TableRow
+              key={user.id}
+              hover
+              onClick={() => handleRowClick(user)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                }
+              }}
+            >
               <TableCell sx={bodyCell}>
                 <UserAvatar user={user} />
               </TableCell>
@@ -119,7 +135,11 @@ export const UsersTable = ({
                 {user.position_name}
               </TableCell>
 
-              <TableCell sx={bodyCell} align="right">
+              <TableCell
+                sx={bodyCell}
+                align="right"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {renderActions(user)}
               </TableCell>
             </TableRow>

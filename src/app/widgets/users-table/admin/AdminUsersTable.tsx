@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { IconButton, Menu, MenuItem, } from '@mui/material';
+import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { UsersTable } from '../ui/UsersTable';
@@ -34,6 +34,7 @@ export const AdminUsersTable = ({
   const openCreate = isCreateModalControlled ? createModalOpen : internalOpenCreate;
 
   const openMenu = Boolean(menuEl);
+
   const closeMenu = () => {
     setMenuEl(null);
   };
@@ -56,6 +57,7 @@ export const AdminUsersTable = ({
 
     setOpenDelete(false);
   };
+
   const handleCreateUser = (newUser: User & { password: string }) => {
     const userToAdd = {
       ...newUser,
@@ -87,7 +89,8 @@ export const AdminUsersTable = ({
     <>
       <IconButton
         sx={{ color: '#bdbdbd' }}
-        onClick={e => {
+        onClick={(e) => {
+          e.stopPropagation();
           setMenuEl(e.currentTarget);
           setActiveUser(user);
         }}

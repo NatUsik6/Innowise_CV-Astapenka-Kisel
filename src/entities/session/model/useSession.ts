@@ -4,7 +4,7 @@ export const useSession = () => {
   return {
     user: {
       id: '1',
-      role: 'ADMIN' as UserRole, // для проверки меняем между USER и ADMIN
+      role: 'USER' as UserRole, // для проверки меняем между USER и ADMIN
     },
     isAuthenticated: true,
   };

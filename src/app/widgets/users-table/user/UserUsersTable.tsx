@@ -18,9 +18,7 @@ export const UserUsersTable = ({
 }: {
   search: string;
 }) => {
-  const [users, setUsers] =
-    useState<User[]>(mockUsers);
-
+  const [users, setUsers] = useState<User[]>(mockUsers);
   const currentUserId = '1'; // временно
 
   const router = useRouter();
@@ -51,18 +49,20 @@ export const UserUsersTable = ({
           user.id === currentUserId ? (
             <IconButton
               sx={{ color: '#bdbdbd' }}
-              onClick={() => openModal(user)}
+              onClick={(e) => {
+                e.stopPropagation();
+                openModal(user);
+              }}
             >
               <MoreVertIcon />
             </IconButton>
           ) : (
             <IconButton
               sx={{ color: '#bdbdbd' }}
-              onClick={() =>
-                router.push(
-                  `/users/${user.id}/profile`
-                )
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/users/${user.id}/profile`);
+              }}
             >
               <KeyboardArrowRightIcon />
             </IconButton>
