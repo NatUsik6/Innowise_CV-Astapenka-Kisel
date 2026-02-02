@@ -1,71 +1,48 @@
 'use client';
 
 import { useState } from 'react';
+import { Box } from '@mui/material';
+
 import { SearchInput } from '@/features/search-users/ui/SearchInput';
-import { UsersTable } from '../widgets/users-table/ui/UsersTable';
+import { useSession } from '@/entities/session/model/useSession';
 import { EmployeesHeader } from '../widgets/users-header/ui/EmployeesHeader';
+import { CreateUserButton } from '@/features/admin-users/ui/CreateUserButton';
+import { AdminUsersTable } from '../widgets/users-table/admin/AdminUsersTable';
+import { UserUsersTable } from '../widgets/users-table/user/UserUsersTable';
+
 
 export default function UsersPage() {
   const [search, setSearch] = useState('');
+  const { user } = useSession();
 
   return (
     <>
       <EmployeesHeader />
-      <SearchInput value={search} onChange={setSearch} />
-      <UsersTable search={search} />
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 3,
+        }}
+      >
+        <SearchInput value={search} onChange={setSearch} />
+
+        {user.role === 'ADMIN' && (
+          <CreateUserButton
+            onClick={() => {
+              console.log('open create user modal');
+            }}
+          />
+        )}
+      </Box>
+
+      {user.role === 'ADMIN' ? (
+        <AdminUsersTable search={search} />
+      ) : (
+        <UserUsersTable search={search} />
+      )}
     </>
   );
 }
-// 'use client';
-
-// import { useState } from 'react';
-// import { Box } from '@mui/material';
-
-// import { SearchInput } from '@/features/search-users/ui/SearchInput';
-// import { CreateUserButton } from '@/features/admin-users/ui/CreateUserButton';
-// import { useAdminUsers } from '@/features/admin-users/model/useAdminUsers';
-// import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
-// import { UsersTable } from '../widgets/users-table/ui/UsersTable';
-// import { EmployeesHeader } from '../widgets/users-header/ui/EmployeesHeader';
-
-// export default function UsersPage() {
-//   const [search, setSearch] = useState('');
-//   const isAdmin = true;
-
-//   const {
-//     users,
-//     open,
-//     user,
-//     mode,
-//     openCreate,
-//     openUpdate,
-//     closeModal,
-//     submitUser,
-//   } = useAdminUsers();
-
-//   return (
-//     <>
-//       <EmployeesHeader />
-
-//       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//         <SearchInput value={search} onChange={setSearch} />
-//         {isAdmin && <CreateUserButton onClick={openCreate} />}
-//       </Box>
-
-//       <UsersTable
-//         search={search}
-//         users={users}
-//         isAdmin={isAdmin}
-//         onAdminUpdate={openUpdate}
-//       />
-
-//       <UpdateUserModal
-//         open={open}
-//         user={user}
-//         mode={mode}
-//         onClose={closeModal}
-//         onSubmit={submitUser}
-//       />
-//     </>
-//   );
-// }

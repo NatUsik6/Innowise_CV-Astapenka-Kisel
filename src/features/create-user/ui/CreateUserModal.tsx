@@ -14,37 +14,46 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 import { User } from '@/entities/user/model/types';
-import { useUpdateUserForm } from '../model/useUpdateUserForm';
-import { StyledTextField } from './fields/StyledTextField';
-import { StyledSelect } from './fields/StyledSelect';
+import { StyledTextField } from '@/features/update-user/ui/fields/StyledTextField';
+import { StyledSelect } from '@/features/update-user/ui/fields/StyledSelect';
 
 interface Props {
   open: boolean;
-  user: User | null;
   onClose: () => void;
-  onSubmit: (data: User & { password?: string }) => void;
+  onSubmit: (user: User & { password: string }) => void;
 }
 
-export const UpdateUserModal = ({
+export const CreateUserModal = ({
   open,
-  user,
   onClose,
   onSubmit,
 }: Props) => {
-  const {
-    form,
-    handleInputChange,
-    handleSelectChange,
-  } = useUpdateUserForm(user);
+  const [form, setForm] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    department: '',
+    department_name: '',
+    position: '',
+    position_name: '',
+    role: 'USER' as const,
+  });
 
   const [password, setPassword] = useState('');
 
-  if (!form) return null;
+  const handleChange =
+    (key: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setForm(prev => ({
+        ...prev,
+        [key]: e.target.value,
+      }));
 
   const handleSubmit = () => {
     onSubmit({
       ...form,
-      ...(password ? { password } : {}),
+      id: crypto.randomUUID(),
+      password,
     });
   };
 
@@ -65,13 +74,10 @@ export const UpdateUserModal = ({
       <DialogTitle
         sx={{
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
-          pr: 2,
         }}
       >
-        Update user
-
+        Create user
         <IconButton
           onClick={onClose}
           sx={{ color: '#bdbdbd' }}
@@ -92,7 +98,7 @@ export const UpdateUserModal = ({
           <StyledTextField
             label="Email"
             value={form.email}
-            onChange={handleInputChange('email')}
+            onChange={handleChange('email')}
           />
 
           <StyledTextField
@@ -100,52 +106,61 @@ export const UpdateUserModal = ({
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="*********"
           />
 
           <StyledTextField
             label="First Name"
             value={form.firstName}
-            onChange={handleInputChange('firstName')}
+            onChange={handleChange('firstName')}
           />
 
           <StyledTextField
             label="Last Name"
             value={form.lastName}
-            onChange={handleInputChange('lastName')}
+            onChange={handleChange('lastName')}
           />
 
           <StyledSelect
             label="Department"
             value={form.department_name}
-            onChange={handleSelectChange(
-              'department_name'
-            )}
+            onChange={e =>
+              setForm(prev => ({
+                ...prev,
+                department_name: e.target.value,
+              }))
+            }
           >
             <MenuItem value="React">React</MenuItem>
             <MenuItem value=".NET">.NET</MenuItem>
-            <MenuItem value="Java">Java</MenuItem>
           </StyledSelect>
 
           <StyledSelect
             label="Position"
             value={form.position_name}
-            onChange={handleSelectChange(
-              'position_name'
-            )}
+            onChange={e =>
+              setForm(prev => ({
+                ...prev,
+                position_name: e.target.value,
+              }))
+            }
           >
             <MenuItem value="Software Engineer">
               Software Engineer
             </MenuItem>
-            <MenuItem value="Data Analyst">
-              Data Analyst
+            <MenuItem value="Network Engineer">
+              Network Engineer
             </MenuItem>
           </StyledSelect>
 
           <StyledSelect
             label="Role"
             value={form.role}
-            onChange={handleSelectChange('role')}
+            onChange={e =>
+              setForm(prev => ({
+                ...prev,
+                role: e.target.value as any,
+              }))
+            }
           >
             <MenuItem value="USER">User</MenuItem>
             <MenuItem value="ADMIN">Admin</MenuItem>
@@ -153,13 +168,7 @@ export const UpdateUserModal = ({
         </Box>
       </DialogContent>
 
-      <DialogActions
-        sx={{
-          p: 3,
-          gap: 1,
-          justifyContent: 'flex-end',
-        }}
-      >
+      <DialogActions sx={{ p: 3 }}>
         <Button
           onClick={onClose}
           variant="outlined"
@@ -174,21 +183,18 @@ export const UpdateUserModal = ({
         </Button>
 
         <Button
-          variant="contained"
           onClick={handleSubmit}
+          variant="contained"
           sx={{
-            backgroundColor: '#5b5b5b',
-            color: '#c6c6c6',
+            backgroundColor: '#e53935',
+            color: '#fff',
             borderRadius: '30px',
             width: 150,
           }}
         >
-          Update
+          Create
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
-
-
-
