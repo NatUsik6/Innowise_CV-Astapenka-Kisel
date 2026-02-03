@@ -19,6 +19,16 @@ import { createUserSchema } from '../model/createUserSchema';
 import { StyledTextField } from '@/features/update-user/ui/fields/StyledTextField';
 import { StyledSelect } from '@/features/update-user/ui/fields/StyledSelect';
 
+import {
+  dialogPaperSx,
+  dialogTitleSx,
+  closeIconSx,
+  formGridSx,
+  dialogActionsSx,
+  cancelButtonSx,
+  createButtonSx,
+} from './CreateUserModal.styles';
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -70,7 +80,6 @@ export const CreateUserModal = ({
       lastName: data.lastName,
       password: data.password,
       role: data.role ?? 'USER',
-
       department: data.department_name ?? '',
       department_name: data.department_name ?? '',
       position: data.position_name ?? '',
@@ -81,45 +90,26 @@ export const CreateUserModal = ({
     reset();
   };
 
+  const isCreateActive = isDirty && !!password;
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: {
-          backgroundColor: 'rgba(53,53,53,1)',
-          color: '#fff',
-          borderRadius: 2,
-        },
-      }}
+      PaperProps={{ sx: dialogPaperSx }}
     >
-      <DialogTitle
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          pr: 2,
-        }}
-      >
+      <DialogTitle sx={dialogTitleSx}>
         Create user
-
-        <IconButton onClick={onClose} sx={{ color: '#bdbdbd' }}>
+        <IconButton onClick={onClose} sx={closeIconSx}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
       <form onSubmit={handleSubmit(submitHandler)}>
         <DialogContent>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 3,
-              mt: 1,
-            }}
-          >
+          <Box sx={formGridSx}>
             <StyledTextField
               label="Email"
               {...register('email')}
@@ -195,18 +185,11 @@ export const CreateUserModal = ({
           </Box>
         </DialogContent>
 
-        <DialogActions
-          sx={{ p: 3, gap: 1, justifyContent: 'flex-end' }}
-        >
+        <DialogActions sx={dialogActionsSx}>
           <Button
             onClick={onClose}
             variant="outlined"
-            sx={{
-              color: '#bdbdbd',
-              borderColor: '#bdbdbd',
-              borderRadius: '30px',
-              width: 150,
-            }}
+            sx={cancelButtonSx}
           >
             Cancel
           </Button>
@@ -214,19 +197,8 @@ export const CreateUserModal = ({
           <Button
             type="submit"
             variant="contained"
-            disabled={!isDirty || !password}
-            sx={{
-              backgroundColor:
-                isDirty && password ? '#e53935' : '#5b5b5b',
-              color:
-                isDirty && password ? '#fff' : '#c6c6c6',
-              borderRadius: '30px',
-              width: 150,
-              '&:hover': {
-                backgroundColor:
-                  isDirty && password ? '#d32f2f' : '#5b5b5b',
-              },
-            }}
+            disabled={!isCreateActive}
+            sx={createButtonSx(isCreateActive)}
           >
             Create
           </Button>

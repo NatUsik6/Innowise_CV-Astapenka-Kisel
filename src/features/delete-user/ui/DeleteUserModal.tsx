@@ -9,6 +9,13 @@ import {
 } from '@mui/material';
 
 import { User } from '@/entities/user/model/types';
+import {
+  dialogPaperSx,
+  textSx,
+  dialogActionsSx,
+  cancelButtonSx,
+  confirmButtonSx,
+} from './DeleteUserModal.styles';
 
 interface Props {
   open: boolean;
@@ -26,21 +33,10 @@ export const DeleteUserModal = ({
   if (!user) return null;
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{
-        sx: {
-          backgroundColor: 'rgba(53,53,53,1)',
-          color: '#fff',
-          borderRadius: 2,
-          p: 2,
-        },
-      }}
-    >
+    <Dialog open={open} onClose={onClose} PaperProps={{ sx: dialogPaperSx }}>
       <DialogTitle>Delete user</DialogTitle>
 
-      <Typography sx={{ px: 3, pb: 2 }}>
+      <Typography sx={textSx}>
         Are you sure you want to delete{' '}
         <b>
           {user.firstName} {user.lastName}
@@ -48,33 +44,12 @@ export const DeleteUserModal = ({
         ?
       </Typography>
 
-      <DialogActions sx={{ p: 3 }}>
-        <Button
-          onClick={onClose}
-          variant="outlined"
-          sx={{
-            color: '#bdbdbd',
-            borderColor: '#bdbdbd',
-            borderRadius: '30px',
-            width: 150,
-          }}
-        >
+      <DialogActions sx={dialogActionsSx}>
+        <Button onClick={onClose} variant="outlined" sx={cancelButtonSx}>
           Cancel
         </Button>
 
-        <Button
-          onClick={onConfirm}
-          variant="contained"
-          sx={{
-            backgroundColor: '#e53935',
-            color: '#fff',
-            borderRadius: '30px',
-            width: 150,
-            '&:hover': {
-              backgroundColor: '#d32f2f',
-            },
-          }}
-        >
+        <Button onClick={onConfirm} variant="contained" sx={confirmButtonSx}>
           Confirm
         </Button>
       </DialogActions>

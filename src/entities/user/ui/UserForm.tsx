@@ -1,12 +1,9 @@
 'use client';
 
-import {
-  DialogContent,
-  TextField,
-  MenuItem,
-} from '@mui/material';
-
+import { MenuItem } from '@mui/material';
 import { UserRole } from '@/entities/user/model/types';
+
+import { FormContent, FormField } from './UserForm.styles';
 
 export interface UserFormValues {
   firstName: string;
@@ -35,35 +32,26 @@ export const UserForm = ({ values, onChange }: Props) => {
     };
 
   return (
-    <DialogContent
-      sx={{
-        display: 'grid',
-        gap: 2,
-        mt: 1,
-      }}
-    >
-      <TextField
+    <FormContent>
+      <FormField
         label="First name"
         value={values.firstName}
         onChange={handleChange('firstName')}
-        fullWidth
       />
 
-      <TextField
+      <FormField
         label="Last name"
         value={values.lastName}
         onChange={handleChange('lastName')}
-        fullWidth
       />
 
-      <TextField
+      <FormField
         label="Email"
         value={values.email}
         onChange={handleChange('email')}
-        fullWidth
       />
 
-      <TextField
+      <FormField
         select
         label="Department"
         value={values.department}
@@ -78,13 +66,12 @@ export const UserForm = ({ values, onChange }: Props) => {
                 : 'Development',
           });
         }}
-        fullWidth
       >
         <MenuItem value="design">Design</MenuItem>
         <MenuItem value="dev">Development</MenuItem>
-      </TextField>
+      </FormField>
 
-      <TextField
+      <FormField
         select
         label="Position"
         value={values.position}
@@ -99,22 +86,20 @@ export const UserForm = ({ values, onChange }: Props) => {
                 : 'Frontend',
           });
         }}
-        fullWidth
       >
         <MenuItem value="designer">Designer</MenuItem>
         <MenuItem value="frontend">Frontend</MenuItem>
-      </TextField>
+      </FormField>
 
-      <TextField
+      <FormField
         select
         label="Role"
         value={values.role}
         onChange={handleChange('role')}
-        fullWidth
       >
         <MenuItem value="USER">User</MenuItem>
         <MenuItem value="ADMIN">Admin</MenuItem>
-      </TextField>
-    </DialogContent>
+      </FormField>
+    </FormContent>
   );
 };

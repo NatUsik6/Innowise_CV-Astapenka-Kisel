@@ -13,6 +13,8 @@ import { UsersTable } from '../ui/UsersTable';
 import { useUpdateUser } from '@/features/update-user/model/useUpdateUser';
 import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
 
+import { actionButtonSx } from './UserUsersTable.styles';
+
 export const UserUsersTable = ({
   search,
 }: {
@@ -33,9 +35,7 @@ export const UserUsersTable = ({
 
   const handleUpdate = (updated: User) => {
     setUsers(prev =>
-      prev.map(u =>
-        u.id === updated.id ? updated : u
-      )
+      prev.map(u => (u.id === updated.id ? updated : u))
     );
     updateUser(updated);
   };
@@ -48,7 +48,7 @@ export const UserUsersTable = ({
         renderActions={(user) =>
           user.id === currentUserId ? (
             <IconButton
-              sx={{ color: '#bdbdbd' }}
+              sx={actionButtonSx}
               onClick={(e) => {
                 e.stopPropagation();
                 openModal(user);
@@ -58,7 +58,7 @@ export const UserUsersTable = ({
             </IconButton>
           ) : (
             <IconButton
-              sx={{ color: '#bdbdbd' }}
+              sx={actionButtonSx}
               onClick={(e) => {
                 e.stopPropagation();
                 router.push(`/users/${user.id}/profile`);

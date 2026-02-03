@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import { useState, useCallback } from 'react';
+import { Menu } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import { UsersTable } from '../ui/UsersTable';
@@ -11,96 +11,81 @@ import { DeleteUserModal } from '@/features/delete-user/ui/DeleteUserModal';
 import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
 import { mockUsers } from '@/entities/user/model/mock';
 
+import {
+  ActionsButton,
+  MenuItemBase,
+  DeleteMenuItem,
+} from './AdminUsersTable.styles';
+
 interface Props {
   search: string;
-  onUserCreated?: (user: User & { password: string }) => void;
-  createModalOpen?: boolean;
-  onCloseCreateModal?: () => void;
+  createModalOpen: boolean;
+  onCloseCreateModal: () => void;
+  onUserCreated: (user: User & { password: string }) => void;
 }
 
 export const AdminUsersTable = ({
   search,
-  onUserCreated,
   createModalOpen,
   onCloseCreateModal,
+  onUserCreated,
 }: Props) => {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [menuEl, setMenuEl] = useState<HTMLElement | null>(null);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [internalOpenCreate, setInternalOpenCreate] = useState(false);
-  const isCreateModalControlled = createModalOpen !== undefined;
-  const openCreate = isCreateModalControlled ? createModalOpen : internalOpenCreate;
 
-  const openMenu = Boolean(menuEl);
-
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setMenuEl(null);
-  };
+  }, []);
 
-  const handleUpdateUser = (updated: User & { password?: string }) => {
-    setUsers(prev =>
-      prev.map(u =>
-        u.id === updated.id ? updated : u
-      )
-    );
-    setOpenUpdate(false);
-  };
+  const handleOpenMenu = useCallback(
+    (user: User) => (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      setMenuEl(e.currentTarget);
+      setActiveUser(user);
+    },
+    []
+  );
 
-  const handleDeleteUser = () => {
+  const handleUpdateUser = useCallback(
+    (updated: User & { password?: string }) => {
+      setUsers(prev =>
+        prev.map(u => (u.id === updated.id ? updated : u))
+      );
+      setOpenUpdate(false);
+    },
+    []
+  );
+
+  const handleDeleteUser = useCallback(() => {
     if (!activeUser) return;
 
     setUsers(prev =>
       prev.filter(u => u.id !== activeUser.id)
     );
-
     setOpenDelete(false);
-  };
+  }, [activeUser]);
 
-  const handleCreateUser = (newUser: User & { password: string }) => {
-    const userToAdd = {
-      ...newUser,
-      id: crypto.randomUUID(),
-    };
-
-    setUsers(prev => [...prev, userToAdd]);
-
-    if (isCreateModalControlled && onCloseCreateModal) {
+  const handleCreateUser = useCallback(
+    (newUser: User & { password: string }) => {
+      setUsers(prev => [...prev, newUser]);
       onCloseCreateModal();
-    } else {
-      setInternalOpenCreate(false);
-    }
-
-    if (onUserCreated) {
       onUserCreated(newUser);
-    }
-  };
-
-  const handleCloseCreateModal = () => {
-    if (isCreateModalControlled && onCloseCreateModal) {
-      onCloseCreateModal();
-    } else {
-      setInternalOpenCreate(false);
-    }
-  };
+    },
+    [onCloseCreateModal, onUserCreated]
+  );
 
   const renderActions = (user: User) => (
     <>
-      <IconButton
-        sx={{ color: '#bdbdbd' }}
-        onClick={(e) => {
-          e.stopPropagation();
-          setMenuEl(e.currentTarget);
-          setActiveUser(user);
-        }}
-      >
+      <ActionsButton onClick={handleOpenMenu(user)}>
         <MoreVertIcon />
-      </IconButton>
+      </ActionsButton>
 
       <Menu
         anchorEl={menuEl}
-        open={openMenu}
+        open={Boolean(menuEl)}
         onClose={closeMenu}
         PaperProps={{
           sx: {
@@ -112,25 +97,23 @@ export const AdminUsersTable = ({
           },
         }}
       >
-        <MenuItem
-          sx={menuItem}
+        <MenuItemBase
           onClick={() => {
             closeMenu();
             setOpenUpdate(true);
           }}
         >
           Update user
-        </MenuItem>
+        </MenuItemBase>
 
-        <MenuItem
-          sx={{ ...menuItem, color: '#e53935' }}
+        <DeleteMenuItem
           onClick={() => {
             closeMenu();
             setOpenDelete(true);
           }}
         >
           Delete user
-        </MenuItem>
+        </DeleteMenuItem>
       </Menu>
     </>
   );
@@ -158,20 +141,10 @@ export const AdminUsersTable = ({
       />
 
       <CreateUserModal
-        open={openCreate}
-        onClose={handleCloseCreateModal}
+        open={createModalOpen}
+        onClose={onCloseCreateModal}
         onSubmit={handleCreateUser}
       />
     </>
   );
-};
-
-const menuItem = {
-  color: '#fff',
-  fontSize: 14,
-  px: 2,
-  py: 1.2,
-  '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
 };

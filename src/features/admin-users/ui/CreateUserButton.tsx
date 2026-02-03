@@ -1,24 +1,15 @@
 'use client';
 
 import { Typography } from '@mui/material';
+import { createUserButtonSx } from './CreateUserButton.styles';
 
-export const CreateUserButton = ({ onClick }: { onClick: () => void }) => {
+export const CreateUserButton = ({
+  onClick,
+}: {
+  onClick: () => void;
+}) => {
   return (
-    <Typography
-      onClick={onClick}
-      sx={{
-        color: '#e53935',
-        fontWeight: 500,
-        cursor: 'pointer',
-        ml: 'auto',
-        pr: '20px',
-        userSelect: 'none',
-
-        '&:hover': {
-          opacity: 0.8,
-        },
-      }}
-    >
+    <Typography onClick={onClick} sx={createUserButtonSx}>
       + CREATE USER
     </Typography>
   );

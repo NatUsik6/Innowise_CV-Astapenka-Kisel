@@ -15,6 +15,14 @@ import { User } from '@/entities/user/model/types';
 import { UserAvatar } from '@/entities/user/ui/UserAvatar';
 import { SortField, useUsersTable } from '../model/useUsersTable';
 
+import {
+  tableContainerSx,
+  headCellSx,
+  bodyCellSx,
+  sortableCellSx,
+  tableRowSx,
+} from './UsersTable.styles';
+
 interface Props {
   users: User[];
   search: string;
@@ -27,6 +35,7 @@ export const UsersTable = ({
   renderActions,
 }: Props) => {
   const router = useRouter();
+
   const {
     users,
     sortField,
@@ -46,55 +55,48 @@ export const UsersTable = ({
   };
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        backgroundColor: '#353535',
-        border: 'none',
-        boxShadow: 'none',
-      }}
-    >
+    <TableContainer component={Paper} sx={tableContainerSx}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell sx={headCell} />
+            <TableCell sx={headCellSx} />
 
             <TableCell
-              sx={sortableCell}
+              sx={sortableCellSx}
               onClick={() => handleSort('firstName')}
             >
               First Name{renderArrow('firstName')}
             </TableCell>
 
             <TableCell
-              sx={sortableCell}
+              sx={sortableCellSx}
               onClick={() => handleSort('lastName')}
             >
               Last Name{renderArrow('lastName')}
             </TableCell>
 
             <TableCell
-              sx={sortableCell}
+              sx={sortableCellSx}
               onClick={() => handleSort('email')}
             >
               Email{renderArrow('email')}
             </TableCell>
 
             <TableCell
-              sx={sortableCell}
+              sx={sortableCellSx}
               onClick={() => handleSort('department')}
             >
               Department{renderArrow('department')}
             </TableCell>
 
             <TableCell
-              sx={sortableCell}
+              sx={sortableCellSx}
               onClick={() => handleSort('position')}
             >
               Position{renderArrow('position')}
             </TableCell>
 
-            <TableCell sx={headCell} />
+            <TableCell sx={headCellSx} />
           </TableRow>
         </TableHead>
 
@@ -103,40 +105,21 @@ export const UsersTable = ({
             <TableRow
               key={user.id}
               hover
+              sx={tableRowSx}
               onClick={() => handleRowClick(user)}
-              sx={{
-                cursor: 'pointer',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                }
-              }}
             >
-              <TableCell sx={bodyCell}>
+              <TableCell sx={bodyCellSx}>
                 <UserAvatar user={user} />
               </TableCell>
 
-              <TableCell sx={bodyCell}>
-                {user.firstName}
-              </TableCell>
-
-              <TableCell sx={bodyCell}>
-                {user.lastName}
-              </TableCell>
-
-              <TableCell sx={bodyCell}>
-                {user.email}
-              </TableCell>
-
-              <TableCell sx={bodyCell}>
-                {user.department_name}
-              </TableCell>
-
-              <TableCell sx={bodyCell}>
-                {user.position_name}
-              </TableCell>
+              <TableCell sx={bodyCellSx}>{user.firstName}</TableCell>
+              <TableCell sx={bodyCellSx}>{user.lastName}</TableCell>
+              <TableCell sx={bodyCellSx}>{user.email}</TableCell>
+              <TableCell sx={bodyCellSx}>{user.department_name}</TableCell>
+              <TableCell sx={bodyCellSx}>{user.position_name}</TableCell>
 
               <TableCell
-                sx={bodyCell}
+                sx={bodyCellSx}
                 align="right"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -148,21 +131,4 @@ export const UsersTable = ({
       </Table>
     </TableContainer>
   );
-};
-
-const headCell = {
-  color: '#bdbdbd',
-  borderBottom: '1px solid rgba(146,146,146,0.7)',
-  fontSize: 13,
-};
-
-const bodyCell = {
-  color: '#fff',
-  borderBottom: '1px solid rgba(146,146,146,0.7)',
-  fontSize: 14,
-};
-
-const sortableCell = {
-  ...headCell,
-  cursor: 'pointer',
 };
