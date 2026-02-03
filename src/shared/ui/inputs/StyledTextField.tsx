@@ -2,28 +2,43 @@
 
 import { TextField, TextFieldProps } from '@mui/material';
 
+type FocusVariant = 'default' | 'danger';
+
+type Props = TextFieldProps & {
+  focusVariant?: FocusVariant;
+};
 const borderColor = 'rgba(146, 146, 146, 0.7)';
+const hoverBorderColor = 'rgba(180, 180, 180, 0.9)'; 
+const focusDangerColor = '#E53935';
 const bgColor = 'rgba(53, 53, 53, 1)';
 const textColor = '#fff';
-const disabledTextColor = '#9e9e9e';
+const labelColor = '#9e9e9e';
 
-export const StyledTextField = (props: TextFieldProps) => {
+export const StyledTextField = ({
+  focusVariant = 'default',
+  ...props
+}: Props) => {
+  const focusColor =
+    focusVariant === 'danger'
+      ? focusDangerColor
+      : borderColor;
+
   return (
     <TextField
       fullWidth
       variant="outlined"
-      InputLabelProps={{ 
-        shrink: true,
-      }}
+      InputLabelProps={{ shrink: true }}
       {...props}
       sx={{
         '& .MuiInputLabel-root': {
-          color: disabledTextColor,
+          color: labelColor,
           backgroundColor: bgColor,
           px: 0.5,
+
           '&.Mui-focused': {
-            color: disabledTextColor, 
+            color: focusColor,
           },
+
           '&.MuiInputLabel-shrink': {
             transform: 'translate(14px, -9px) scale(0.75)',
           },
@@ -36,12 +51,15 @@ export const StyledTextField = (props: TextFieldProps) => {
           '& fieldset': {
             borderColor,
           },
+
           '&:hover fieldset': {
-            borderColor,
+            borderColor: hoverBorderColor,
           },
+
           '&.Mui-focused fieldset': {
-            borderColor,
+            borderColor: focusColor,
           },
+
           '&.Mui-disabled fieldset': {
             borderColor,
           },
@@ -49,11 +67,6 @@ export const StyledTextField = (props: TextFieldProps) => {
 
         '& input': {
           color: textColor,
-        },
-
-        '& .Mui-disabled input': {
-          WebkitTextFillColor: disabledTextColor,
-          color: disabledTextColor,
         },
 
         ...props.sx,

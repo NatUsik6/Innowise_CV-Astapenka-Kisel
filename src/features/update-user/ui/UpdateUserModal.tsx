@@ -15,8 +15,8 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { User } from '@/entities/user/model/types';
 import { useUpdateUserForm } from '../model/useUpdateUserForm';
-import { StyledTextField } from './fields/StyledTextField';
-import { StyledSelect } from './fields/StyledSelect';
+import { StyledTextField } from '../../../shared/ui/inputs/StyledTextField';
+import { StyledSelect } from '../../../shared/ui/inputs/StyledSelect';
 
 import {
   dialogPaperSx,
