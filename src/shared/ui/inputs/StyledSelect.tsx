@@ -16,6 +16,7 @@ type Props = PropsWithChildren<
     focusVariant?: FocusVariant;
   }
 >;
+
 const borderColor = 'rgba(146, 146, 146, 0.7)';
 const hoverBorderColor = 'rgba(180, 180, 180, 0.9)';
 const focusDangerColor = '#E53935';
@@ -48,7 +49,8 @@ export const StyledSelect = ({
           },
 
           '&.MuiInputLabel-shrink': {
-            transform: 'translate(14px, -9px) scale(0.75)',
+            transform:
+              'translate(14px, -9px) scale(0.75)',
           },
         }}
       >
@@ -58,6 +60,17 @@ export const StyledSelect = ({
       <Select
         {...props}
         label={label}
+        MenuProps={{
+          PaperProps: {
+            sx: {
+              backgroundColor: bgColor,
+              border:
+                '1px solid rgba(146,146,146,0.7)',
+              borderRadius: 2,
+              mt: 1,
+            },
+          },
+        }}
         sx={{
           backgroundColor: bgColor,
           color: textColor,
@@ -66,13 +79,15 @@ export const StyledSelect = ({
             borderColor,
           },
 
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: hoverBorderColor,
-          },
+          '&:hover .MuiOutlinedInput-notchedOutline':
+            {
+              borderColor: hoverBorderColor,
+            },
 
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: focusColor,
-          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline':
+            {
+              borderColor: focusColor,
+            },
 
           '& .MuiSelect-icon': {
             color: textColor,

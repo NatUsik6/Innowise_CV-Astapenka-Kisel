@@ -1,14 +1,15 @@
 'use client';
 
-import { User } from '@/app/entities/user/model/types';
-import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
-import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
+import { ChangeEvent } from 'react';
 import {
   Box,
   MenuItem,
 } from '@mui/material';
-import { ChangeEvent } from 'react';
 import { SelectProps } from '@mui/material/Select';
+
+import { User } from '@/app/entities/user/model/types';
+import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
+import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
 
 interface Props {
   user: User;
@@ -17,13 +18,29 @@ interface Props {
   onChange: (data: Partial<User>) => void;
 }
 
+const menuItemSx = {
+  color: '#fff',
+  fontSize: 14,
+
+  '&:hover': {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+
+  '&.Mui-selected': {
+    backgroundColor: 'rgba(255,255,255,0.12)',
+
+    '&:hover': {
+      backgroundColor: 'rgba(255,255,255,0.16)',
+    },
+  },
+};
+
 export const ProfileForm = ({
   user,
   departments,
   positions,
   onChange,
 }: Props) => {
-
   const handleTextChange =
     (field: 'profile.firstName' | 'profile.lastName') =>
     (
@@ -82,7 +99,11 @@ export const ProfileForm = ({
         )}
       >
         {departments.map(dep => (
-          <MenuItem key={dep} value={dep}>
+          <MenuItem
+            key={dep}
+            value={dep}
+            sx={menuItemSx}
+          >
             {dep}
           </MenuItem>
         ))}
@@ -97,7 +118,11 @@ export const ProfileForm = ({
         )}
       >
         {positions.map(pos => (
-          <MenuItem key={pos} value={pos}>
+          <MenuItem
+            key={pos}
+            value={pos}
+            sx={menuItemSx}
+          >
             {pos}
           </MenuItem>
         ))}
