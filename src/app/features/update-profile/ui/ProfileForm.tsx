@@ -3,9 +3,12 @@
 import { User } from '@/app/entities/user/model/types';
 import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
 import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
-import { Box, MenuItem } from '@mui/material';
+import {
+  Box,
+  MenuItem,
+} from '@mui/material';
 import { ChangeEvent } from 'react';
-
+import { SelectProps } from '@mui/material/Select';
 
 interface Props {
   user: User;
@@ -20,36 +23,63 @@ export const ProfileForm = ({
   positions,
   onChange,
 }: Props) => {
-  const handle =
-    (field: keyof User | 'profile.firstName' | 'profile.lastName') =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (field.startsWith('profile')) {
-        const key = field.split('.')[1] as 'firstName' | 'lastName';
-        onChange({
-          profile: { ...user.profile, [key]: e.target.value },
-        } as Partial<User>);
-      } else {
-        onChange({ [field]: e.target.value } as Partial<User>);
-      }
+
+  const handleTextChange =
+    (field: 'profile.firstName' | 'profile.lastName') =>
+    (
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      const key = field.split('.')[1] as
+        | 'firstName'
+        | 'lastName';
+
+      onChange({
+        profile: {
+          ...user.profile,
+          [key]: e.target.value,
+        },
+      });
     };
 
+  const handleSelectChange =
+    (field: 'department_name' | 'position_name') =>
+    ((event) => {
+      onChange({
+        [field]: event.target.value as string,
+      } as Partial<User>);
+    }) as SelectProps['onChange'];
+
   return (
-    <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+    <Box
+      display="grid"
+      gridTemplateColumns="1fr 1fr"
+      gap={2}
+    >
       <StyledTextField
         label="First Name"
         value={user.profile.firstName}
-        onChange={handle('profile.firstName')}
+        focusVariant="danger"
+        onChange={handleTextChange(
+          'profile.firstName'
+        )}
       />
 
       <StyledTextField
         label="Last Name"
         value={user.profile.lastName}
-        onChange={handle('profile.lastName')}
+        focusVariant="danger"
+        onChange={handleTextChange(
+          'profile.lastName'
+        )}
       />
 
       <StyledSelect
+        label="Department"
         value={user.department_name}
-        onChange={handle('department_name')}
+        focusVariant="danger"
+        onChange={handleSelectChange(
+          'department_name'
+        )}
       >
         {departments.map(dep => (
           <MenuItem key={dep} value={dep}>
@@ -59,8 +89,12 @@ export const ProfileForm = ({
       </StyledSelect>
 
       <StyledSelect
+        label="Position"
         value={user.position_name}
-        onChange={handle('position_name')}
+        focusVariant="danger"
+        onChange={handleSelectChange(
+          'position_name'
+        )}
       >
         {positions.map(pos => (
           <MenuItem key={pos} value={pos}>
