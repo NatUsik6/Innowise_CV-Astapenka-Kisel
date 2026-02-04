@@ -2,6 +2,12 @@
 
 import { Menu, MenuItem } from '@mui/material';
 
+import {
+  menuPaperSx,
+  menuItemSx,
+  deleteMenuItemSx,
+} from './AvatarActionsMenu.styles';
+
 interface Props {
   anchorEl: HTMLElement | null;
   open: boolean;
@@ -33,33 +39,25 @@ export const AvatarActionsMenu = ({
         horizontal: 'left',
       }}
       PaperProps={{
-        sx: {
-          mt: 1,
-          bgcolor: '#1E1E1E',
-          borderRadius: 2,
-          minWidth: 220,
-        },
+        sx: menuPaperSx,
       }}
     >
       <MenuItem
+        sx={menuItemSx}
         onClick={() => {
           onUpdate();
           onClose();
         }}
-        sx={menuItemSx}
       >
         Update avatar
       </MenuItem>
 
       {canDelete && (
         <MenuItem
+          sx={deleteMenuItemSx}
           onClick={() => {
             onDelete();
             onClose();
-          }}
-          sx={{
-            ...menuItemSx,
-            color: '#E53935',
           }}
         >
           Delete avatar
@@ -67,13 +65,4 @@ export const AvatarActionsMenu = ({
       )}
     </Menu>
   );
-};
-
-const menuItemSx = {
-  fontSize: 14,
-  color: '#fff',
-
-  '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
 };

@@ -7,6 +7,11 @@ import { User } from '@/app/entities/user/model/types';
 import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
 import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
 
+import {
+  formGridSx,
+  menuItemSx,
+} from './ProfileForm.styles';
+
 interface Props {
   user: User;
   departments: string[];
@@ -14,23 +19,6 @@ interface Props {
   readOnly: boolean;
   onChange: (data: Partial<User>) => void;
 }
-
-const menuItemSx = {
-  color: '#fff',
-  fontSize: 14,
-
-  '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
-
-  '&.Mui-selected': {
-    backgroundColor: 'rgba(255,255,255,0.12)',
-
-    '&:hover': {
-      backgroundColor: 'rgba(255,255,255,0.16)',
-    },
-  },
-};
 
 export const ProfileForm = ({
   user,
@@ -55,11 +43,7 @@ export const ProfileForm = ({
     };
 
   return (
-    <Box
-      display="grid"
-      gridTemplateColumns="1fr 1fr"
-      gap={2}
-    >
+    <Box sx={formGridSx}>
       <StyledTextField
         label="First Name"
         value={user.profile.firstName}

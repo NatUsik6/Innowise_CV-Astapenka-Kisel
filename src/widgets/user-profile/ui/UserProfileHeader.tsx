@@ -8,12 +8,22 @@ import {
 } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import { useRef, useState } from 'react';
+
 import { User } from '@/app/entities/user/model/types';
 import { currentUserMock } from '@/app/entities/auth/model/mock';
 import { useAvatarUpload } from '@/app/features/upload-avatar/model/useAvatarUpload';
 import { AvatarUploader } from '@/app/features/upload-avatar/ui/AvatarUploader';
 import { AvatarActionsMenu } from '@/app/features/upload-avatar/ui/AvatarActionsMenu';
 
+import {
+  headerRootSx,
+  avatarRowSx,
+  uploadHintSx,
+  uploadIconSx,
+  textCenterSx,
+  emailTextSx,
+  dateTextSx,
+} from './UserProfileHeader.styles';
 
 interface Props {
   user: User;
@@ -46,10 +56,16 @@ export const UserProfileHeader = ({
     onSuccess: onAvatarChange,
   });
 
-  const openMenu = (
+  const handleAvatarClick = (
     e: React.MouseEvent<HTMLElement>
   ) => {
     if (!canEdit) return;
+
+    if (!user.profile.avatar) {
+      inputRef.current?.click();
+      return;
+    }
+
     setAnchorEl(e.currentTarget);
   };
 
@@ -70,22 +86,9 @@ export const UserProfileHeader = ({
 
   return (
     <>
-      <Box
-        sx={{
-          mt: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-          }}
-        >
-          <Box onClick={openMenu}>
+      <Box sx={headerRootSx}>
+        <Box sx={avatarRowSx}>
+          <Box onClick={handleAvatarClick}>
             <AvatarUploader
               avatar={user.profile.avatar}
               canEdit={canEdit}
@@ -95,22 +98,16 @@ export const UserProfileHeader = ({
 
           {canEdit && (
             <Box
-              display="flex"
-              gap={1.5}
-              alignItems="center"
-              sx={{ cursor: 'pointer' }}
-              onClick={openMenu}
+              sx={uploadHintSx}
+              onClick={handleAvatarClick}
             >
-              <UploadIcon sx={{ mt: 0.3 }} />
+              <UploadIcon sx={uploadIconSx} />
 
               <Box>
                 <Typography fontWeight={500}>
                   Upload avatar image
                 </Typography>
-                <Typography
-                  fontSize={12}
-                  color="rgba(255,255,255,0.6)"
-                >
+                <Typography fontSize={12}>
                   png, jpg or gif no more than 0.5MB
                 </Typography>
               </Box>
@@ -118,17 +115,17 @@ export const UserProfileHeader = ({
           )}
         </Box>
 
-        <Box textAlign="center" mt={3}>
+        <Box sx={textCenterSx}>
           <Typography variant="h5">
             {user.profile.firstName}{' '}
             {user.profile.lastName}
           </Typography>
 
-          <Typography color="rgba(255,255,255,0.7)">
+          <Typography sx={emailTextSx}>
             {user.email}
           </Typography>
 
-          <Typography color="rgba(255,255,255,0.5)">
+          <Typography sx={dateTextSx}>
             A member since{' '}
             {formatDate(user.created_at)}
           </Typography>

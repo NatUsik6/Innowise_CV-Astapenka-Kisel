@@ -4,6 +4,8 @@ import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useState } from 'react';
 
+import { avatarBoxSx } from './AvatarUploader.styles';
+
 interface Props {
   avatar?: string;
   canEdit: boolean;
@@ -43,22 +45,7 @@ export const AvatarUploader = ({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      sx={{
-        width: 120,
-        height: 120,
-        borderRadius: '50%',
-        bgcolor: '#555',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        cursor: canEdit ? 'pointer' : 'default',
-        outline: isDragging
-          ? '2px dashed #E53935'
-          : 'none',
-        outlineOffset: 2,
-        transition: 'outline 0.15s ease',
-      }}
+      sx={avatarBoxSx(canEdit, isDragging)}
     >
       {avatar ? (
         <Image

@@ -15,6 +15,13 @@ import { currentUserMock } from '@/app/entities/auth/model/mock';
 import { ProfileForm } from '@/app/features/update-profile/ui/ProfileForm';
 import { UserProfileHeader } from '@/widgets/user-profile/ui/UserProfileHeader';
 
+import {
+  pageContainerSx,
+  formWrapperSx,
+  actionsWrapperSx,
+  updateButtonSx,
+} from './ProfilePage.styles';
+
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
 
@@ -91,13 +98,13 @@ export default function ProfilePage() {
   if (!savedUser || !draftUser) return null;
 
   return (
-    <Box maxWidth={900} mx="auto" mt={6}>
+    <Box sx={pageContainerSx}>
       <UserProfileHeader
         user={draftUser}
         onAvatarChange={handleAvatarChange}
       />
 
-      <Box mt={6}>
+      <Box sx={formWrapperSx}>
         <ProfileForm
           user={draftUser}
           departments={departments}
@@ -108,26 +115,11 @@ export default function ProfilePage() {
       </Box>
 
       {canEditProfile && (
-        <Box
-          mt={5}
-          display="flex"
-          justifyContent="flex-end"
-        >
+        <Box sx={actionsWrapperSx}>
           <Button
             disabled={!isChanged}
             onClick={handleUpdate}
-            sx={{
-              width: 440,
-              height: 44,
-              borderRadius: 22,
-              fontWeight: 600,
-              backgroundColor: isChanged
-                ? '#E53935'
-                : 'rgba(255,255,255,0.15)',
-              color: isChanged
-                ? '#fff'
-                : 'rgba(255,255,255,0.4)',
-            }}
+            sx={updateButtonSx(isChanged)}
           >
             UPDATE
           </Button>

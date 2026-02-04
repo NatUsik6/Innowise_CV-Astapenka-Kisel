@@ -1,6 +1,8 @@
 'use client';
 
+import { deleteAvatarMock, uploadAvatarMock } from '@/app/entities/user/api/avatar.mock';
 import { useState } from 'react';
+
 
 const MAX_SIZE = 500 * 1024;
 const ALLOWED_TYPES = [
@@ -10,15 +12,6 @@ const ALLOWED_TYPES = [
   'image/gif',
 ];
 
-const uploadAvatarMock = async (file: File) => {
-  await new Promise(r => setTimeout(r, 500));
-  return URL.createObjectURL(file);
-};
-
-const deleteAvatarMock = async () => {
-  await new Promise(r => setTimeout(r, 300));
-};
-
 interface UseAvatarUploadParams {
   onSuccess: (avatar?: string) => void;
 }
@@ -26,12 +19,10 @@ interface UseAvatarUploadParams {
 export const useAvatarUpload = ({
   onSuccess,
 }: UseAvatarUploadParams) => {
-  const [error, setError] = useState<string | null>(
-    null
-  );
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const validateFile = (file: File) => {
+  const validateFile = (file: File): string | null => {
     if (!ALLOWED_TYPES.includes(file.type)) {
       return 'Unsupported file format. Use png, jpg or gif.';
     }
@@ -73,7 +64,9 @@ export const useAvatarUpload = ({
     }
   };
 
-  const resetError = () => setError(null);
+  const resetError = () => {
+    setError(null);
+  };
 
   return {
     upload,
