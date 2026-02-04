@@ -1,7 +1,7 @@
 :root {
-  --bg-color: rgba(53, 53, 53, 1);
-  --primary-red: rgba(198, 48, 49, 1);
-  --text-primary: rgba(255, 255, 255, 1);
+  --color-bg: rgba(53, 53, 53, 1);
+  --color-primary-red: rgba(198, 48, 49, 1);
+  --color-primary-text: rgba(255, 255, 255, 1);
 }
 
 * {
@@ -14,8 +14,6 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background-color: var(--bg-color);
-  color: var(--text-primary);
   font-family: Roboto, Helvetica, sans-serif;
   overflow-x: hidden;  
   -webkit-font-smoothing: antialiased;
