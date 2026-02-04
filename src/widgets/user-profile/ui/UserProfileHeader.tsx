@@ -43,6 +43,9 @@ export const UserProfileHeader = ({
     currentUser.id === user.id ||
     currentUser.role === 'ADMIN';
 
+  const avatarFallback =
+    user.profile.firstName?.[0]?.toUpperCase();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [anchorEl, setAnchorEl] =
     useState<HTMLElement | null>(null);
@@ -93,6 +96,7 @@ export const UserProfileHeader = ({
               avatar={user.profile.avatar}
               canEdit={canEdit}
               onDropFile={upload}
+              fallback={avatarFallback}
             />
           </Box>
 

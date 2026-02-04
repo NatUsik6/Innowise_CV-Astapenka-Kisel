@@ -10,12 +10,14 @@ interface Props {
   avatar?: string;
   canEdit: boolean;
   onDropFile?: (file: File) => void;
+  fallback?: string;
 }
 
 export const AvatarUploader = ({
   avatar,
   canEdit,
   onDropFile,
+  fallback,
 }: Props) => {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -57,7 +59,7 @@ export const AvatarUploader = ({
         />
       ) : (
         <Typography variant="h4">
-          R
+          {fallback ?? 'U'}
         </Typography>
       )}
     </Box>

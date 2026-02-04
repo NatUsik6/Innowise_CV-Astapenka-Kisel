@@ -19,3 +19,4 @@ export const avatarBoxSx = (
     outlineOffset: 2,
     transition: 'outline 0.15s ease',
 });
+
