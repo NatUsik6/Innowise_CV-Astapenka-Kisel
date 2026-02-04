@@ -7,8 +7,9 @@ type FocusVariant = 'default' | 'danger';
 type Props = TextFieldProps & {
   focusVariant?: FocusVariant;
 };
+
 const borderColor = 'rgba(146, 146, 146, 0.7)';
-const hoverBorderColor = 'rgba(180, 180, 180, 0.9)'; 
+const hoverBorderColor = 'rgba(180, 180, 180, 0.9)';
 const focusDangerColor = '#E53935';
 const bgColor = 'rgba(53, 53, 53, 1)';
 const textColor = '#fff';
@@ -39,6 +40,10 @@ export const StyledTextField = ({
             color: focusColor,
           },
 
+          '&.Mui-disabled': {
+            color: borderColor,
+          },
+
           '&.MuiInputLabel-shrink': {
             transform: 'translate(14px, -9px) scale(0.75)',
           },
@@ -62,6 +67,12 @@ export const StyledTextField = ({
 
           '&.Mui-disabled fieldset': {
             borderColor,
+          },
+
+          '&.Mui-disabled input': {
+            WebkitTextFillColor: textColor,
+            color: textColor,
+            cursor: 'default',
           },
         },
 

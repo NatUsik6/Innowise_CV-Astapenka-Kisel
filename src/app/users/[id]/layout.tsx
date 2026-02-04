@@ -3,7 +3,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 import { useParams, useRouter } from 'next/navigation';
-import { UserProfileHeader } from '@/widgets/user-profile/ui/UserProfileHeader';
 import { UserProfileTabs } from '@/widgets/user-profile/ui/UserProfileTabs';
 import { User } from '@/app/entities/user/model/types';
 import { getUserMock } from '@/app/entities/user/api/mock';
@@ -27,7 +26,6 @@ export default function UserLayout({ children }: { children: ReactNode }) {
   return (
     <Box px={6} py={1}>
       <UserProfileTabs userId={user.id} />
-      <UserProfileHeader user={user} />
       <Box mt={4}>{children}</Box>
     </Box>
   );

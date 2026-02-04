@@ -2,24 +2,47 @@
 
 import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useState } from 'react';
 
 interface Props {
   avatar?: string;
-  userId: string;
   canEdit: boolean;
+  onDropFile?: (file: File) => void;
 }
 
-export const AvatarUploader = ({ avatar, canEdit }: Props) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+export const AvatarUploader = ({
+  avatar,
+  canEdit,
+  onDropFile,
+}: Props) => {
+  const [isDragging, setIsDragging] = useState(false);
 
-  const onPick = () => {
-    if (canEdit) inputRef.current?.click();
+  const handleDragOver = (e: React.DragEvent) => {
+    if (!canEdit) return;
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    if (!canEdit) return;
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file && onDropFile) {
+      onDropFile(file);
+    }
   };
 
   return (
     <Box
-      onClick={onPick}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
       sx={{
         width: 120,
         height: 120,
@@ -28,20 +51,28 @@ export const AvatarUploader = ({ avatar, canEdit }: Props) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         cursor: canEdit ? 'pointer' : 'default',
+        outline: isDragging
+          ? '2px dashed #E53935'
+          : 'none',
+        outlineOffset: 2,
+        transition: 'outline 0.15s ease',
       }}
     >
       {avatar ? (
-        <Image src={avatar} alt="avatar" width={120} height={120} />
+        <Image
+          src={avatar}
+          alt="avatar"
+          width={120}
+          height={120}
+          style={{ objectFit: 'cover' }}
+        />
       ) : (
-        <Typography variant="h4">R</Typography>
+        <Typography variant="h4">
+          R
+        </Typography>
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        hidden
-        accept="image/png,image/jpeg,image/jpg,image/gif"
-      />
     </Box>
   );
 };
