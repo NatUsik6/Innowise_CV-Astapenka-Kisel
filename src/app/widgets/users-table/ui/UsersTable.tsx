@@ -29,6 +29,14 @@ interface Props {
   renderActions: (user: User) => React.ReactNode;
 }
 
+const sortableColumns: {
+  label: string;
+  field: SortField;
+}[] = [
+  { label: 'First Name', field: 'firstName' },
+  { label: 'Last Name', field: 'lastName' },
+];
+
 export const UsersTable = ({
   users: initialUsers,
   search,
@@ -61,19 +69,16 @@ export const UsersTable = ({
           <TableRow>
             <TableCell sx={headCellSx} />
 
-            <TableCell
-              sx={sortableCellSx}
-              onClick={() => handleSort('firstName')}
-            >
-              First Name{renderArrow('firstName')}
-            </TableCell>
-
-            <TableCell
-              sx={sortableCellSx}
-              onClick={() => handleSort('lastName')}
-            >
-              Last Name{renderArrow('lastName')}
-            </TableCell>
+            {sortableColumns.map(({ label, field }) => (
+              <TableCell
+                key={field}
+                sx={sortableCellSx}
+                onClick={() => handleSort(field)}
+              >
+                {label}
+                {renderArrow(field)}
+              </TableCell>
+            ))}
 
             <TableCell
               sx={sortableCellSx}

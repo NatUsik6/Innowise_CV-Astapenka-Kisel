@@ -23,3 +23,11 @@ export const MenuItemBase = styled(MenuItem)({
 export const DeleteMenuItem = styled(MenuItemBase)({
   color: '#e53935',
 });
+
+export const menuPaperSx = {
+  backgroundColor: 'rgba(53,53,53,1)',
+  border: '1px solid rgba(146,146,146,0.7)',
+  borderRadius: 2,
+  mt: 1,
+  minWidth: 160,
+};

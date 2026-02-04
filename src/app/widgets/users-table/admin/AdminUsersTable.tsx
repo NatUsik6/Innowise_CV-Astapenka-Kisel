@@ -15,6 +15,7 @@ import {
   ActionsButton,
   MenuItemBase,
   DeleteMenuItem,
+  menuPaperSx,
 } from './AdminUsersTable.styles';
 
 interface Props {
@@ -87,15 +88,7 @@ export const AdminUsersTable = ({
         anchorEl={menuEl}
         open={Boolean(menuEl)}
         onClose={closeMenu}
-        PaperProps={{
-          sx: {
-            backgroundColor: 'rgba(53,53,53,1)',
-            border: '1px solid rgba(146,146,146,0.7)',
-            borderRadius: 2,
-            mt: 1,
-            minWidth: 160,
-          },
-        }}
+        PaperProps={{ sx: menuPaperSx }}
       >
         <MenuItemBase
           onClick={() => {

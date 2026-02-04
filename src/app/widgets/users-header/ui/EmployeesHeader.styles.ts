@@ -1,7 +1,7 @@
 'use client';
 
 import { styled } from '@mui/material/styles';
-import { Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 
 export const HeaderLinkText = styled(Typography)({
   color: '#797878ff',
@@ -16,4 +16,7 @@ export const HeaderLinkText = styled(Typography)({
   '&:hover': {
     opacity: 0.8,
   },
+});
+export const HeaderLink = styled(Link)({
+  textDecoration: 'none',
 });

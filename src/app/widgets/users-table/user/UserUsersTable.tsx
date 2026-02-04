@@ -21,7 +21,7 @@ export const UserUsersTable = ({
   search: string;
 }) => {
   const [users, setUsers] = useState<User[]>(mockUsers);
-  const currentUserId = '1'; // временно
+  const currentUserId = '1'; // TODO: временно
 
   const router = useRouter();
 
@@ -33,12 +33,19 @@ export const UserUsersTable = ({
     updateUser,
   } = useUpdateUser();
 
-  const handleUpdate = (updated: User) => {
-    setUsers(prev =>
-      prev.map(u => (u.id === updated.id ? updated : u))
+  const handleUpdate = (updatedUser: User) => {
+    setUsers(previousUsers =>
+      previousUsers.map(user => {
+        if (user.id === updatedUser.id) {
+          return updatedUser;
+        }
+        return user;
+      })
     );
-    updateUser(updated);
+
+    updateUser(updatedUser);
   };
+
 
   return (
     <>
