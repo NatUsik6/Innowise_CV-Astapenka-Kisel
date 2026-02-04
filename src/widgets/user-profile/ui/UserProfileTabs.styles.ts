@@ -1,7 +1,7 @@
 import { SxProps, Theme } from '@mui/material';
 
 export const tabsRootSx: SxProps<Theme> = {
-  mt: 4,
+  mt: 1,
 
   '& .MuiTabs-indicator': {
     backgroundColor: '#E53935',
@@ -12,7 +12,8 @@ export const tabsRootSx: SxProps<Theme> = {
 export const tabItemSx: SxProps<Theme> = {
   color: '#fff',
   fontWeight: 500,
-
+  fontSize: 14,
+  width: 150,
   '&.Mui-selected': {
     color: '#E53935',
   },

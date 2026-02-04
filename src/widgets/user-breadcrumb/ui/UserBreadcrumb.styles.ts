@@ -8,9 +8,9 @@ export const BreadcrumbRoot = styled(Box)({
     display: 'flex',
     alignItems: 'center',
     gap: 8,
-    paddingLeft: 20,
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingLeft: 14,
+    paddingTop: 5,
+    paddingBottom: 0,
 });
 
 export const BreadcrumbLink = styled(Link)({
@@ -21,7 +21,7 @@ export const BreadcrumbLink = styled(Link)({
 export const BreadcrumbLinkText = styled(Typography)({
     color: '#797878',
     fontWeight: 400,
-    fontSize: 16,
+    fontSize: 14,
 
     '&:hover': {
         opacity: 0.8,
@@ -39,7 +39,7 @@ export const CrumbText = styled(Typography)({
     gap: 6,
     color: '#E53935',
     fontWeight: 500,
-    fontSize: 16,
+    fontSize: 14,
 });
 
 export const ProfileLink = styled(Link)({
