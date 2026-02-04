@@ -1,5 +1,3 @@
-'use client';
-
 import { TextField, TextFieldProps } from "@mui/material";
 import { FocusVariant, textColor } from './StyledInputs/inputs.constants';
 import { getInputsLabelStyle } from './StyledInputs/InputsLabel.styles';
