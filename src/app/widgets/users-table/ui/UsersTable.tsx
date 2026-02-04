@@ -33,9 +33,12 @@ const sortableColumns: {
   label: string;
   field: SortField;
 }[] = [
-  { label: 'First Name', field: 'firstName' },
-  { label: 'Last Name', field: 'lastName' },
-];
+    { label: 'First Name', field: 'firstName' },
+    { label: 'Last Name', field: 'lastName' },
+    { label: 'Email', field: 'email' },
+    { label: 'Department', field: 'department' },
+    { label: 'Position', field: 'position' },
+  ];
 
 export const UsersTable = ({
   users: initialUsers,
@@ -79,27 +82,6 @@ export const UsersTable = ({
                 {renderArrow(field)}
               </TableCell>
             ))}
-
-            <TableCell
-              sx={sortableCellSx}
-              onClick={() => handleSort('email')}
-            >
-              Email{renderArrow('email')}
-            </TableCell>
-
-            <TableCell
-              sx={sortableCellSx}
-              onClick={() => handleSort('department')}
-            >
-              Department{renderArrow('department')}
-            </TableCell>
-
-            <TableCell
-              sx={sortableCellSx}
-              onClick={() => handleSort('position')}
-            >
-              Position{renderArrow('position')}
-            </TableCell>
 
             <TableCell sx={headCellSx} />
           </TableRow>
