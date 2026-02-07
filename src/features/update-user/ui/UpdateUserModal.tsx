@@ -1,6 +1,7 @@
+// глянуть
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -10,13 +11,18 @@ import {
   Box,
   MenuItem,
   IconButton,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { User } from '@/entities/user/model/types';
-import { useUpdateUserForm } from '../model/useUpdateUserForm';
-import { StyledTextField } from '../../../shared/ui/inputs/StyledTextField';
-import { StyledSelect } from '../../../shared/ui/inputs/StyledSelect';
+import { User, UpdateUserInput, UpdateProfileInput } from '@/entities/user/model/types';
+import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
+import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
+import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
+import { usePositions } from '@/entities/user/api/position/api/usePositions';
+import { useUpdateUser } from '@/entities/user/api/useUpdateUser';
+import { useUpdateProfile } from '@/entities/user/api/useUpdateProfile';
 
 import {
   dialogPaperSx,
@@ -32,8 +38,24 @@ interface Props {
   open: boolean;
   user: User | null;
   onClose: () => void;
-  onSubmit: (data: User & { password?: string }) => void;
+  onSubmit?: () => void;
 }
+
+type FormData = {
+  firstName: string;
+  lastName: string;
+  departmentId: string;
+  positionId: string;
+  role: 'Admin' | 'Employee';
+};
+
+const EMPTY_FORM: FormData = {
+  firstName: '',
+  lastName: '',
+  departmentId: '',
+  positionId: '',
+  role: 'Employee',
+};
 
 export const UpdateUserModal = ({
   open,
@@ -41,75 +63,207 @@ export const UpdateUserModal = ({
   onClose,
   onSubmit,
 }: Props) => {
-  const {
-    form,
-    handleInputChange,
-    handleSelectChange,
-    isDirty,
-  } = useUpdateUserForm(user);
+  const { departments, loading: depsLoading } = useDepartments();
+  const { positions, loading: posLoading } = usePositions();
+  const [updateUser, { loading: updatingUser }] = useUpdateUser();
+  const [updateProfile, { loading: updatingProfile }] = useUpdateProfile();
 
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState<FormData>(EMPTY_FORM);
+  const [isDirty, setIsDirty] = useState(false);
+  
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success');
 
-  if (!form) return null;
+  useEffect(() => {
+    if (user && open) {
+      setForm({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        departmentId: user.department || '',
+        positionId: user.position || '',
+        role: user.role,
+      });
+      setIsDirty(false);
+    } else {
+      setForm(EMPTY_FORM);
+      setIsDirty(false);
+    }
+  }, [user, open]);
 
-  const isActive = isDirty || !!password;
+  if (!user) return null;
 
-  const handleSubmit = () => {
-    onSubmit({
-      ...form,
-      ...(password ? { password } : {}),
-    });
+  const handleChange = (field: keyof FormData, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    setIsDirty(true);
+  };
+
+  const updating = updatingUser || updatingProfile;
+  const isActive = isDirty && !updating;
+
+  const handleSubmit = async () => {
+    if (!user) return;
+
+    try {
+      if (
+        form.firstName !== user.firstName ||
+        form.lastName !== user.lastName
+      ) {
+        const profileInput: UpdateProfileInput = {
+          userId: user.id,
+          first_name: form.firstName,
+          last_name: form.lastName,
+        };
+
+        await updateProfile({
+          variables: { profile: profileInput },
+        });
+      }
+
+      const needsUserUpdate =
+        form.role !== user.role ||
+        form.departmentId !== user.department ||
+        form.positionId !== user.position;
+
+      if (needsUserUpdate) {
+        const userInput: UpdateUserInput = {
+          userId: user.id,
+        };
+
+        if (form.role !== user.role) {
+          userInput.role = form.role;
+        }
+
+        if (form.departmentId !== user.department) {
+          userInput.departmentId = form.departmentId || undefined;
+        }
+
+        if (form.positionId !== user.position) {
+          userInput.positionId = form.positionId || undefined;
+        }
+
+        await updateUser({
+          variables: { user: userInput },
+        });
+      }
+
+      setAlertMessage('User updated successfully');
+      setAlertSeverity('success');
+      onClose();
+      onSubmit?.();
+    } catch (err) {
+      setAlertMessage(err instanceof Error ? err.message : 'Failed to update user');
+      setAlertSeverity('error');
+    }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: dialogPaperSx }}>
-      <DialogTitle sx={dialogTitleSx}>
-        Update user
-        <IconButton onClick={onClose} sx={closeIconSx}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
+          Update user
+          <IconButton onClick={onClose} sx={closeIconSx}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
 
-      <DialogContent>
-        <Box sx={formGridSx}>
-          <StyledTextField label="Email" value={form.email} onChange={handleInputChange('email')} />
-          <StyledTextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="*********"
-          />
-          <StyledTextField label="First Name" value={form.firstName} onChange={handleInputChange('firstName')} />
-          <StyledTextField label="Last Name" value={form.lastName} onChange={handleInputChange('lastName')} />
+        <DialogContent>
+          <Box sx={formGridSx}>
+            <StyledTextField
+              label="First Name"
+              value={form.firstName}
+              onChange={e => handleChange('firstName', e.target.value)}
+            />
 
-          <StyledSelect label="Department" value={form.department_name} onChange={handleSelectChange('department_name')}>
-            <MenuItem value="React">React</MenuItem>
-            <MenuItem value=".NET">.NET</MenuItem>
-            <MenuItem value="Java">Java</MenuItem>
-          </StyledSelect>
+            <StyledTextField
+              label="Last Name"
+              value={form.lastName}
+              onChange={e => handleChange('lastName', e.target.value)}
+            />
 
-          <StyledSelect label="Position" value={form.position_name} onChange={handleSelectChange('position_name')}>
-            <MenuItem value="Software Engineer">Software Engineer</MenuItem>
-            <MenuItem value="Data Analyst">Data Analyst</MenuItem>
-          </StyledSelect>
+            <StyledSelect
+              label="Department"
+              value={form.departmentId}
+              onChange={e => handleChange('departmentId', e.target.value)}
+              disabled={depsLoading}
+            >
+              <MenuItem value="">None</MenuItem>
+              {departments.map(dep => (
+                <MenuItem key={dep.id} value={dep.id}>
+                  {dep.name}
+                </MenuItem>
+              ))}
+            </StyledSelect>
 
-          <StyledSelect label="Role" value={form.role} onChange={handleSelectChange('role')}>
-            <MenuItem value="USER">User</MenuItem>
-            <MenuItem value="ADMIN">Admin</MenuItem>
-          </StyledSelect>
-        </Box>
-      </DialogContent>
+            <StyledSelect
+              label="Position"
+              value={form.positionId}
+              onChange={e => handleChange('positionId', e.target.value)}
+              disabled={posLoading}
+            >
+              <MenuItem value="">None</MenuItem>
+              {positions.map(pos => (
+                <MenuItem key={pos.id} value={pos.id}>
+                  {pos.name}
+                </MenuItem>
+              ))}
+            </StyledSelect>
 
-      <DialogActions sx={dialogActionsSx}>
-        <Button onClick={onClose} variant="outlined" sx={cancelButtonSx}>
-          Cancel
-        </Button>
+            <StyledTextField
+              label="Email"
+              value={user.email}
+              disabled
+            />
 
-        <Button onClick={handleSubmit} variant="contained" disabled={!isActive} sx={updateButtonSx(isActive)}>
-          Update
-        </Button>
-      </DialogActions>
-    </Dialog>
+            <StyledSelect
+              label="Role"
+              value={form.role}
+              onChange={e => handleChange('role', e.target.value as 'Admin' | 'Employee')}
+            >
+              <MenuItem value="Employee">Employee</MenuItem>
+              <MenuItem value="Admin">Admin</MenuItem>
+            </StyledSelect>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={dialogActionsSx}>
+          <Button onClick={onClose} variant="outlined" sx={cancelButtonSx}>
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            disabled={!isActive}
+            sx={updateButtonSx(isActive)}
+          >
+            {updating ? 'Updating...' : 'Update'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={!!alertMessage}
+        autoHideDuration={4000}
+        onClose={() => setAlertMessage('')}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      >
+        <Alert
+          severity={alertSeverity}
+          onClose={() => setAlertMessage('')}
+          sx={{ width: '100%' }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };

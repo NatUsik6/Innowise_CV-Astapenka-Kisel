@@ -1,85 +1,70 @@
 'use client';
 
 import { useState } from 'react';
-import { IconButton } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { useRouter } from 'next/navigation';
 
-import { mockUsers } from '@/entities/user/model/mock';
 import { User } from '@/entities/user/model/types';
 import { UsersTable } from '../ui/UsersTable';
-
-import { useUpdateUser } from '@/features/update-user/model/useUpdateUser';
+import { useSession } from '@/entities/session/model/useSession';
+import { useUsers } from '@/entities/user/api/useUsers';
 import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
+import { StatusText } from '@/shared/ui/StatusText/StatusText.styles';
 
-import { actionButtonSx } from './UserUsersTable.styles';
+import { UserActions } from './UserActions';
 
-export const UserUsersTable = ({
-  search,
-}: {
-  search: string;
-}) => {
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const currentUserId = '1'; // TODO: временно
+export const UserUsersTable = ({ search }: { search: string }) => {
+  const { user: currentUser } = useSession();
+  const { users, loading, error } = useUsers();
 
-  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const {
-    open,
-    user,
-    openModal,
-    closeModal,
-    updateUser,
-  } = useUpdateUser();
-
-  const handleUpdate = (updatedUser: User) => {
-    setUsers(previousUsers =>
-      previousUsers.map(user => {
-        if (user.id === updatedUser.id) {
-          return updatedUser;
-        }
-        return user;
-      })
-    );
-
-    updateUser(updatedUser);
+  const openModal = (user: User) => {
+    setSelectedUser(user);
+    setOpen(true);
   };
 
+  const closeModal = () => {
+    setOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleUpdate = () => {
+    closeModal();
+  };
+
+  if (loading) {
+    return <StatusText>Loading...</StatusText>;
+  }
+
+  if (error) {
+    return (
+      <StatusText color="#ff5252">
+        Error: {error.message}
+      </StatusText>
+    );
+  }
+
+  if (!currentUser) {
+    return <StatusText>No authorization</StatusText>;
+  }
 
   return (
     <>
       <UsersTable
-        users={users}
+        users={users || []}
         search={search}
-        renderActions={(user) =>
-          user.id === currentUserId ? (
-            <IconButton
-              sx={actionButtonSx}
-              onClick={(e) => {
-                e.stopPropagation();
-                openModal(user);
-              }}
-            >
-              <MoreVertIcon />
-            </IconButton>
-          ) : (
-            <IconButton
-              sx={actionButtonSx}
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(`/users/${user.id}/profile`);
-              }}
-            >
-              <KeyboardArrowRightIcon />
-            </IconButton>
-          )
-        }
+        renderActions={(user) => (
+          <UserActions
+            user={user}
+            currentUserId={currentUser.id}
+            onEdit={openModal}
+          />
+        )}
       />
 
       <UpdateUserModal
         open={open}
-        user={user}
+        user={selectedUser}
         onClose={closeModal}
         onSubmit={handleUpdate}
       />

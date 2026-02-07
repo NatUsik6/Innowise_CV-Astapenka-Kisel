@@ -6,7 +6,7 @@ export const UserAvatar = ({ user }: { user: User }) => {
     return <Avatar src={user.avatar} />;
   }
 
-  const letter = user.firstName?.[0]?.toUpperCase() || '?';
+  const letter = user.firstName?.[0]?.toUpperCase() || 'U';
 
   return (
     <Avatar sx={{ bgcolor: '#4b4b4b' }}>

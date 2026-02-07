@@ -24,7 +24,7 @@ export const createUserSchema = z.object({
     .min(2, 'Last name must be at least 2 characters')
     .regex(nameRegex, 'Last name can contain only letters'),
 
-  department_name: z.string().optional(),
-  position_name: z.string().optional(),
-  role: z.enum(['USER', 'ADMIN']).optional(),
+  departmentId: z.string().optional(),
+  positionId: z.string().optional(),
+  role: z.enum(['Admin', 'Employee']),
 });

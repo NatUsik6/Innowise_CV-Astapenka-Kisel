@@ -38,7 +38,7 @@ export const AuthForm = ({ mode }: { mode: 'login' | 'signup' }) => {
   const handleAuthSuccess = (access_token: string, refresh_token: string) => {
     Cookies.set('access_token', access_token);
     Cookies.set('refresh_token', refresh_token);
-    router.push('/');
+    router.push('/users');
   };
 
   const handleAuthError = (error: unknown) => {

@@ -1,14 +1,14 @@
 import Link from 'next/link';
 
-import { HeaderLink, HeaderLinkText } from './EmployeesHeader.styles';
 import { ROUTES } from '@/shared/constants/routes';
+import { HeaderLinkText } from './EmployeesHeader.styles';
 
 export const EmployeesHeader = () => {
   return (
-    <HeaderLink href={ROUTES.USERS}>
+    <Link href={ROUTES.USERS} style={{ textDecoration: 'none' }}>
       <HeaderLinkText variant="h5">
         Employees
       </HeaderLinkText>
-    </HeaderLink>
+    </Link>
   );
 };

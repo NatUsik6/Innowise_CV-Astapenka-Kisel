@@ -32,7 +32,7 @@ export const useUsersTable = (
       const value = search.toLowerCase().trim();
 
       result = result.filter(user =>
-        `${user.firstName} ${user.lastName}`
+        `${user.firstName || ''} ${user.lastName || ''}`
           .toLowerCase()
           .includes(value)
       );
@@ -43,15 +43,15 @@ export const useUsersTable = (
         const getValue = (u: User): string => {
           switch (sortField) {
             case 'firstName':
-              return u.firstName;
+              return u.firstName || '';
             case 'lastName':
-              return u.lastName;
+              return u.lastName || '';
             case 'email':
-              return u.email;
+              return u.email || '';
             case 'department':
-              return u.department_name;
+              return u.department_name || '';
             case 'position':
-              return u.position_name;
+              return u.position_name || '';
             default:
               return '';
           }

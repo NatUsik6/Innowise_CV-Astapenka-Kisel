@@ -1,122 +1,99 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Menu } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Snackbar, Alert } from '@mui/material';
 
 import { UsersTable } from '../ui/UsersTable';
 import { User } from '@/entities/user/model/types';
 import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
 import { DeleteUserModal } from '@/features/delete-user/ui/DeleteUserModal';
 import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
-import { mockUsers } from '@/entities/user/model/mock';
 
-import {
-  ActionsButton,
-  MenuItemBase,
-  DeleteMenuItem,
-  menuPaperSx,
-} from './AdminUsersTable.styles';
+import { useUsers } from '@/entities/user/api/useUsers';
+import { useDeleteUser } from '@/entities/user/api/useDeleteUser';
+
+import { StatusText } from '@/shared/ui/StatusText/StatusText.styles';
+import { AdminUserActions } from './AdminUserActions';
 
 interface Props {
   search: string;
   createModalOpen: boolean;
   onCloseCreateModal: () => void;
-  onUserCreated: (user: User & { password: string }) => void;
 }
 
 export const AdminUsersTable = ({
   search,
   createModalOpen,
   onCloseCreateModal,
-  onUserCreated,
 }: Props) => {
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [menuEl, setMenuEl] = useState<HTMLElement | null>(null);
+  const { users, loading, error } = useUsers();
+  const [deleteUser] = useDeleteUser();
+
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const closeMenu = useCallback(() => {
-    setMenuEl(null);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success');
+
+  const handleUpdateUser = useCallback(() => {
+    setOpenUpdate(false);
   }, []);
 
-  const handleOpenMenu = useCallback(
-    (user: User) => (e: React.MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
-      setMenuEl(e.currentTarget);
-      setActiveUser(user);
-    },
-    []
-  );
-
-  const handleUpdateUser = useCallback(
-    (updated: User & { password?: string }) => {
-      setUsers(prev =>
-        prev.map(u => (u.id === updated.id ? updated : u))
-      );
-      setOpenUpdate(false);
-    },
-    []
-  );
-
-  const handleDeleteUser = useCallback(() => {
+  const handleDeleteUser = useCallback(async () => {
     if (!activeUser) return;
 
-    setUsers(prev =>
-      prev.filter(u => u.id !== activeUser.id)
+    try {
+      await deleteUser({
+        variables: { userId: activeUser.id },
+      });
+      setAlertMessage('User deleted successfully');
+      setAlertSeverity('success');
+      setOpenDelete(false);
+    } catch (err) {
+      setAlertMessage(err instanceof Error ? err.message : 'Failed to delete user');
+      setAlertSeverity('error');
+    }
+  }, [activeUser, deleteUser]);
+
+  const handleCreateUser = useCallback(() => {
+    onCloseCreateModal();
+  }, [onCloseCreateModal]);
+
+  if (loading) {
+    return <StatusText>Loading...</StatusText>;
+  }
+
+  if (error) {
+    return (
+      <StatusText color="#ff5252">
+        Error loading users: {error.message}
+      </StatusText>
     );
-    setOpenDelete(false);
-  }, [activeUser]);
+  }
 
-  const handleCreateUser = useCallback(
-    (newUser: User & { password: string }) => {
-      setUsers(prev => [...prev, newUser]);
-      onCloseCreateModal();
-      onUserCreated(newUser);
-    },
-    [onCloseCreateModal, onUserCreated]
-  );
-
-  const renderActions = (user: User) => (
-    <>
-      <ActionsButton onClick={handleOpenMenu(user)}>
-        <MoreVertIcon />
-      </ActionsButton>
-
-      <Menu
-        anchorEl={menuEl}
-        open={Boolean(menuEl)}
-        onClose={closeMenu}
-        PaperProps={{ sx: menuPaperSx }}
-      >
-        <MenuItemBase
-          onClick={() => {
-            closeMenu();
-            setOpenUpdate(true);
-          }}
-        >
-          Update user
-        </MenuItemBase>
-
-        <DeleteMenuItem
-          onClick={() => {
-            closeMenu();
-            setOpenDelete(true);
-          }}
-        >
-          Delete user
-        </DeleteMenuItem>
-      </Menu>
-    </>
-  );
+  if (!users || users.length === 0) {
+    return <StatusText>No users found</StatusText>;
+  }
 
   return (
     <>
       <UsersTable
         users={users}
         search={search}
-        renderActions={renderActions}
+        renderActions={(user) => (
+          <AdminUserActions
+            user={user}
+            onUpdate={(u) => {
+              setActiveUser(u);
+              setOpenUpdate(true);
+            }}
+            onDelete={(u) => {
+              setActiveUser(u);
+              setOpenDelete(true);
+            }}
+          />
+        )}
       />
 
       <UpdateUserModal
@@ -138,6 +115,21 @@ export const AdminUsersTable = ({
         onClose={onCloseCreateModal}
         onSubmit={handleCreateUser}
       />
+
+      <Snackbar
+        open={!!alertMessage}
+        autoHideDuration={4000}
+        onClose={() => setAlertMessage('')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity={alertSeverity}
+          onClose={() => setAlertMessage('')}
+          sx={{ width: '100%' }}
+        >
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

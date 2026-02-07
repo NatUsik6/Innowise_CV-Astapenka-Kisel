@@ -1,4 +1,30 @@
-export type UserRole = 'USER' | 'ADMIN';
+export type UserRole = 'Admin' | 'Employee';
+
+export interface UserProfile {
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  avatar?: string;
+}
+
+export interface Department {
+  id: string;
+  name: string;
+}
+
+export interface Position {
+  id: string;
+  name: string;
+}
+
+export interface UserAPI {
+  id: string;
+  email: string;
+  role: UserRole;
+  profile: UserProfile;
+  department: Department | null;
+  position: Position | null;
+}
 
 export interface User {
   id: string;
@@ -11,4 +37,33 @@ export interface User {
   position_name: string;
   role: UserRole;
   avatar?: string;
+}
+
+export interface CreateUserInput {
+  auth: {
+    email: string;
+    password: string;
+  };
+  profile: {
+    first_name: string;
+    last_name: string;
+  };
+  cvsIds: string[]; 
+  departmentId?: string; 
+  positionId?: string; 
+  role: UserRole; 
+}
+
+export interface UpdateUserInput {
+  userId: string; 
+  cvsIds?: string[]; 
+  departmentId?: string; 
+  positionId?: string;
+  role?: UserRole; 
+}
+
+export interface UpdateProfileInput {
+  userId: string;
+  first_name?: string; 
+  last_name?: string; 
 }

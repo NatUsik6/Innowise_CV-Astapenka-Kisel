@@ -1,7 +1,7 @@
 import { UserRole } from './types';
 
 export const getUserPermissions = (role: UserRole) => {
-  const isAdmin = role === 'ADMIN';
+  const isAdmin = role === 'Admin';
 
   return {
     canCreateUser: isAdmin,
