@@ -1,4 +1,3 @@
-// глянуть
 'use client';
 
 import { useState } from 'react';
@@ -10,21 +9,15 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Box,
   IconButton,
-  MenuItem,
-  Snackbar,
-  Alert,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { CreateUserInput } from '@/entities/user/model/types';
 import { createUserSchema } from '../model/createUserSchema';
-import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
-import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
-import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
-import { usePositions } from '@/entities/user/api/position/api/usePositions';
 import { useCreateUser } from '@/entities/user/api/useCreateUser';
+import { ActionSnackbar } from '@/shared/ui/users/ActionSnackbar/ActionSnackbar';
+import { CreateUserForm, CreateUserFormValues } from './CreateUserForm';
 
 import {
   dialogPaperSx,
@@ -42,23 +35,7 @@ interface Props {
   onSubmit?: () => void;
 }
 
-type FormValues = {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  departmentId?: string;
-  positionId?: string;
-  role: 'Admin' | 'Employee';
-};
-
-export const CreateUserModal = ({
-  open,
-  onClose,
-  onSubmit,
-}: Props) => {
-  const { departments, loading: depsLoading } = useDepartments();
-  const { positions, loading: posLoading } = usePositions();
+export const CreateUserModal = ({ open, onClose, onSubmit }: Props) => {
   const [createUser, { loading: creating }] = useCreateUser();
 
   const [alertMessage, setAlertMessage] = useState('');
@@ -71,7 +48,7 @@ export const CreateUserModal = ({
     watch,
     setValue,
     reset,
-  } = useForm<FormValues>({
+  } = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
       email: '',
@@ -86,7 +63,7 @@ export const CreateUserModal = ({
 
   const password = watch('password');
 
-  const submitHandler = async (data: FormValues) => {
+  const submitHandler = async (data: CreateUserFormValues) => {
     const input: CreateUserInput = {
       auth: {
         email: data.email,
@@ -106,7 +83,7 @@ export const CreateUserModal = ({
       await createUser({
         variables: { user: input },
       });
-      
+
       setAlertMessage('User created successfully');
       setAlertSeverity('success');
       reset();
@@ -138,93 +115,17 @@ export const CreateUserModal = ({
 
         <form onSubmit={handleSubmit(submitHandler)}>
           <DialogContent>
-            <Box sx={formGridSx}>
-              <StyledTextField
-                label="Email"
-                {...register('email')}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-
-              <StyledTextField
-                label="Password"
-                type="password"
-                {...register('password')}
-                error={!!errors.password}
-                helperText={errors.password?.message}
-              />
-
-              <StyledTextField
-                label="First Name"
-                {...register('firstName')}
-                error={!!errors.firstName}
-                helperText={errors.firstName?.message}
-              />
-
-              <StyledTextField
-                label="Last Name"
-                {...register('lastName')}
-                error={!!errors.lastName}
-                helperText={errors.lastName?.message}
-              />
-
-              <StyledSelect
-                label="Department"
-                value={watch('departmentId') ?? ''}
-                onChange={e =>
-                  setValue('departmentId', e.target.value, {
-                    shouldDirty: true,
-                  })
-                }
-                disabled={depsLoading}
-              >
-                <MenuItem value="">None</MenuItem>
-                {departments.map(dep => (
-                  <MenuItem key={dep.id} value={dep.id}>
-                    {dep.name}
-                  </MenuItem>
-                ))}
-              </StyledSelect>
-
-              <StyledSelect
-                label="Position"
-                value={watch('positionId') ?? ''}
-                onChange={e =>
-                  setValue('positionId', e.target.value, {
-                    shouldDirty: true,
-                  })
-                }
-                disabled={posLoading}
-              >
-                <MenuItem value="">None</MenuItem>
-                {positions.map(pos => (
-                  <MenuItem key={pos.id} value={pos.id}>
-                    {pos.name}
-                  </MenuItem>
-                ))}
-              </StyledSelect>
-
-              <StyledSelect
-                label="Role"
-                value={watch('role')}
-                onChange={e =>
-                  setValue('role', e.target.value as 'Admin' | 'Employee', {
-                    shouldDirty: true,
-                  })
-                }
-              >
-                <MenuItem value="Employee">Employee</MenuItem>
-                <MenuItem value="Admin">Admin</MenuItem>
-              </StyledSelect>
-            </Box>
+            <CreateUserForm
+              register={register}
+              watch={watch}
+              setValue={setValue}
+              errors={errors}
+              formGridSx={formGridSx}
+            />
           </DialogContent>
 
           <DialogActions sx={dialogActionsSx}>
-            <Button
-              onClick={onClose}
-              variant="outlined"
-              sx={cancelButtonSx}
-            >
+            <Button onClick={onClose} variant="outlined" sx={cancelButtonSx}>
               Cancel
             </Button>
 
@@ -240,23 +141,11 @@ export const CreateUserModal = ({
         </form>
       </Dialog>
 
-      <Snackbar
-        open={!!alertMessage}
-        autoHideDuration={4000}
+      <ActionSnackbar
+        message={alertMessage}
+        severity={alertSeverity}
         onClose={() => setAlertMessage('')}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-      >
-        <Alert
-          severity={alertSeverity}
-          onClose={() => setAlertMessage('')}
-          sx={{ width: '100%' }}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
+      />
     </>
   );
 };

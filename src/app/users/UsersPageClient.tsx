@@ -11,7 +11,7 @@ import { AdminUsersTable } from '../widgets/users-table/admin/AdminUsersTable';
 import { UserUsersTable } from '../widgets/users-table/user/UserUsersTable';
 
 import { Toolbar } from './UsersPageClient.styles';
-import { StatusText } from '@/shared/ui/StatusText/StatusText.styles';
+import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
 
 export const UsersPageClient = () => {
   const router = useRouter();
@@ -41,10 +41,6 @@ export const UsersPageClient = () => {
 
   if (!mounted || loading) {
     return <StatusText>Loading...</StatusText>;
-  }
-
-  if (!user) {
-    return null;
   }
 
   const isAdmin = user.role === 'Admin';

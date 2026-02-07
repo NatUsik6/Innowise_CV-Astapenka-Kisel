@@ -1,4 +1,3 @@
-// глянуть
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,21 +7,15 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Box,
-  MenuItem,
   IconButton,
-  Snackbar,
-  Alert,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { User, UpdateUserInput, UpdateProfileInput } from '@/entities/user/model/types';
-import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
-import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
-import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
-import { usePositions } from '@/entities/user/api/position/api/usePositions';
 import { useUpdateUser } from '@/entities/user/api/useUpdateUser';
 import { useUpdateProfile } from '@/entities/user/api/useUpdateProfile';
+import { ActionSnackbar } from '@/shared/ui/users/ActionSnackbar/ActionSnackbar';
+import { UpdateUserForm, UpdateUserFormData } from './UpdateUserForm';
 
 import {
   dialogPaperSx,
@@ -41,36 +34,22 @@ interface Props {
   onSubmit?: () => void;
 }
 
-type FormData = {
-  firstName: string;
-  lastName: string;
-  departmentId: string;
-  positionId: string;
-  role: 'Admin' | 'Employee';
-};
-
-const EMPTY_FORM: FormData = {
+const EMPTY_FORM: UpdateUserFormData = {
   firstName: '',
   lastName: '',
   departmentId: '',
   positionId: '',
   role: 'Employee',
+  email: '',
 };
 
-export const UpdateUserModal = ({
-  open,
-  user,
-  onClose,
-  onSubmit,
-}: Props) => {
-  const { departments, loading: depsLoading } = useDepartments();
-  const { positions, loading: posLoading } = usePositions();
+export const UpdateUserModal = ({ open, user, onClose, onSubmit }: Props) => {
   const [updateUser, { loading: updatingUser }] = useUpdateUser();
   const [updateProfile, { loading: updatingProfile }] = useUpdateProfile();
 
-  const [form, setForm] = useState<FormData>(EMPTY_FORM);
+  const [form, setForm] = useState<UpdateUserFormData>(EMPTY_FORM);
   const [isDirty, setIsDirty] = useState(false);
-  
+
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success');
 
@@ -82,6 +61,7 @@ export const UpdateUserModal = ({
         departmentId: user.department || '',
         positionId: user.position || '',
         role: user.role,
+        email: user.email || '', 
       });
       setIsDirty(false);
     } else {
@@ -92,7 +72,7 @@ export const UpdateUserModal = ({
 
   if (!user) return null;
 
-  const handleChange = (field: keyof FormData, value: string) => {
+  const handleChange = (field: keyof UpdateUserFormData, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
     setIsDirty(true);
   };
@@ -104,10 +84,7 @@ export const UpdateUserModal = ({
     if (!user) return;
 
     try {
-      if (
-        form.firstName !== user.firstName ||
-        form.lastName !== user.lastName
-      ) {
+      if (form.firstName !== user.firstName || form.lastName !== user.lastName) {
         const profileInput: UpdateProfileInput = {
           userId: user.id,
           first_name: form.firstName,
@@ -173,62 +150,12 @@ export const UpdateUserModal = ({
         </DialogTitle>
 
         <DialogContent>
-          <Box sx={formGridSx}>
-            <StyledTextField
-              label="First Name"
-              value={form.firstName}
-              onChange={e => handleChange('firstName', e.target.value)}
-            />
-
-            <StyledTextField
-              label="Last Name"
-              value={form.lastName}
-              onChange={e => handleChange('lastName', e.target.value)}
-            />
-
-            <StyledSelect
-              label="Department"
-              value={form.departmentId}
-              onChange={e => handleChange('departmentId', e.target.value)}
-              disabled={depsLoading}
-            >
-              <MenuItem value="">None</MenuItem>
-              {departments.map(dep => (
-                <MenuItem key={dep.id} value={dep.id}>
-                  {dep.name}
-                </MenuItem>
-              ))}
-            </StyledSelect>
-
-            <StyledSelect
-              label="Position"
-              value={form.positionId}
-              onChange={e => handleChange('positionId', e.target.value)}
-              disabled={posLoading}
-            >
-              <MenuItem value="">None</MenuItem>
-              {positions.map(pos => (
-                <MenuItem key={pos.id} value={pos.id}>
-                  {pos.name}
-                </MenuItem>
-              ))}
-            </StyledSelect>
-
-            <StyledTextField
-              label="Email"
-              value={user.email}
-              disabled
-            />
-
-            <StyledSelect
-              label="Role"
-              value={form.role}
-              onChange={e => handleChange('role', e.target.value as 'Admin' | 'Employee')}
-            >
-              <MenuItem value="Employee">Employee</MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
-            </StyledSelect>
-          </Box>
+          <UpdateUserForm
+            user={user}
+            formData={form}
+            onChange={handleChange}
+            formGridSx={formGridSx}
+          />
         </DialogContent>
 
         <DialogActions sx={dialogActionsSx}>
@@ -247,23 +174,11 @@ export const UpdateUserModal = ({
         </DialogActions>
       </Dialog>
 
-      <Snackbar
-        open={!!alertMessage}
-        autoHideDuration={4000}
+      <ActionSnackbar
+        message={alertMessage}
+        severity={alertSeverity}
         onClose={() => setAlertMessage('')}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-      >
-        <Alert
-          severity={alertSeverity}
-          onClose={() => setAlertMessage('')}
-          sx={{ width: '100%' }}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
+      />
     </>
   );
 };

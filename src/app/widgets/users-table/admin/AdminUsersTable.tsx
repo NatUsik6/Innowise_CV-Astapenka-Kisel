@@ -12,7 +12,7 @@ import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
 import { useUsers } from '@/entities/user/api/useUsers';
 import { useDeleteUser } from '@/entities/user/api/useDeleteUser';
 
-import { StatusText } from '@/shared/ui/StatusText/StatusText.styles';
+import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
 import { AdminUserActions } from './AdminUserActions';
 
 interface Props {

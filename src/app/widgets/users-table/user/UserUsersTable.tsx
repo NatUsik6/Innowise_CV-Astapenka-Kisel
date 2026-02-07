@@ -7,7 +7,7 @@ import { UsersTable } from '../ui/UsersTable';
 import { useSession } from '@/entities/session/model/useSession';
 import { useUsers } from '@/entities/user/api/useUsers';
 import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
-import { StatusText } from '@/shared/ui/StatusText/StatusText.styles';
+import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
 
 import { UserActions } from './UserActions';
 
