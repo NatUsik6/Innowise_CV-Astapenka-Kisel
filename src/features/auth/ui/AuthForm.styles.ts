@@ -1,15 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { Box, TextField, Button, Tabs, Tab, Typography, Link, IconButton } from '@mui/material';
 
-export const AuthWrapper = styled(Box)({
-  minHeight: '100vh',
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'center',
-  backgroundColor: 'rgba(53, 53, 53, 1)',
-  paddingTop: '0.5rem',
-});
-
 export const FormCard = styled(Box)({
   width: '100%',
   maxWidth: '35rem',

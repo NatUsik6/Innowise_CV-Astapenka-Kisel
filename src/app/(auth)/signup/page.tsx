@@ -1,7 +1,7 @@
 'use client';
 
-import { AuthForm } from "@/features/auth/AuthForm";
-import { AuthWrapper } from "@/features/auth/ui/AuthStyles";
+import { AuthForm } from "@/features/auth/ui/AuthForm";
+import { AuthWrapper } from "./SignupPage.styles";
 
 export default function LoginPage() {
   return (
