@@ -1,6 +1,3 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 
 import {
@@ -16,6 +13,7 @@ interface Props {
     firstName: string;
     lastName: string;
     userId: string;
+    currentPage?: string;
 }
 
 const PAGE_LABELS: Record<string, string> = {
@@ -28,12 +26,9 @@ export const UserBreadcrumb = ({
     firstName,
     lastName,
     userId,
+    currentPage,
 }: Props) => {
-    const pathname = usePathname();
-    const lastSegment = pathname.split('/').pop();
-
-    const pageLabel =
-        lastSegment && PAGE_LABELS[lastSegment];
+    const pageLabel = currentPage && PAGE_LABELS[currentPage];
 
     return (
         <BreadcrumbRoot>

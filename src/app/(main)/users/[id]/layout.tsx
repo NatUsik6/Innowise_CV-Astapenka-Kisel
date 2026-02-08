@@ -5,10 +5,9 @@ import { Box, CircularProgress } from '@mui/material';
 import { useParams } from 'next/navigation';
 
 import { UserProfileTabs } from '@/widgets/user-profile/ui/UserProfileTabs';
-import { UserBreadcrumb } from '@/widgets/user-breadcrumb/ui/UserBreadcrumb';
+import { UserBreadcrumbClient } from '@/widgets/user-breadcrumb/ui/UserBreadcrumbClient';
 import { User } from '@/entities/user/model/types';
 import { getUserMock } from '@/entities/user/api/mock';
-
 
 
 export default function UserLayout({
@@ -33,7 +32,7 @@ export default function UserLayout({
 
   return (
     <Box px={6} py={1}>
-      <UserBreadcrumb
+      <UserBreadcrumbClient
         userId={user.id}
         firstName={user.profile.firstName}
         lastName={user.profile.lastName}

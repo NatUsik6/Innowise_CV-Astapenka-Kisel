@@ -1,8 +1,5 @@
-'use client';
-
 import { ChangeEvent } from 'react';
 import { Box, MenuItem } from '@mui/material';
-
 import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
 import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
 
