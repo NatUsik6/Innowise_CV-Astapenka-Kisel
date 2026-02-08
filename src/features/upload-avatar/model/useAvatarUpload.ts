@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteAvatarMock, uploadAvatarMock } from '@/app/entities/user/api/avatar.mock';
+import { deleteAvatarMock, uploadAvatarMock } from '@/entities/user/api/avatar.mock';
 import { useState } from 'react';
 
 

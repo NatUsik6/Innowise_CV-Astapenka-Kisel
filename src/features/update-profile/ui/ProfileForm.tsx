@@ -3,7 +3,6 @@
 import { ChangeEvent } from 'react';
 import { Box, MenuItem } from '@mui/material';
 
-import { User } from '@/app/entities/user/model/types';
 import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
 import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
 
@@ -11,6 +10,7 @@ import {
   formGridSx,
   menuItemSx,
 } from './ProfileForm.styles';
+import { User } from '@/entities/user/model/types';
 
 interface Props {
   user: User;

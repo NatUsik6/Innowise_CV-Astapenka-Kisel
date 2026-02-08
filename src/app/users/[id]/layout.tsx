@@ -6,9 +6,10 @@ import { useParams } from 'next/navigation';
 
 import { UserProfileTabs } from '@/widgets/user-profile/ui/UserProfileTabs';
 import { UserBreadcrumb } from '@/widgets/user-breadcrumb/ui/UserBreadcrumb';
+import { User } from '@/entities/user/model/types';
+import { getUserMock } from '@/entities/user/api/mock';
 
-import { User } from '@/app/entities/user/model/types';
-import { getUserMock } from '@/app/entities/user/api/mock';
+
 
 export default function UserLayout({
   children,

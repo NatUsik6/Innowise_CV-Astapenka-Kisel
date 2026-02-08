@@ -9,11 +9,7 @@ import {
 import UploadIcon from '@mui/icons-material/Upload';
 import { useRef, useState } from 'react';
 
-import { User } from '@/app/entities/user/model/types';
-import { currentUserMock } from '@/app/entities/auth/model/mock';
-import { useAvatarUpload } from '@/app/features/upload-avatar/model/useAvatarUpload';
-import { AvatarUploader } from '@/app/features/upload-avatar/ui/AvatarUploader';
-import { AvatarActionsMenu } from '@/app/features/upload-avatar/ui/AvatarActionsMenu';
+
 
 import {
   headerRootSx,
@@ -24,6 +20,11 @@ import {
   emailTextSx,
   dateTextSx,
 } from './UserProfileHeader.styles';
+import { User } from '@/entities/user/model/types';
+import { currentUserMock } from '@/entities/auth/model/mock';
+import { useAvatarUpload } from '@/features/upload-avatar/model/useAvatarUpload';
+import { AvatarUploader } from '@/features/upload-avatar/ui/AvatarUploader';
+import { AvatarActionsMenu } from '@/features/upload-avatar/ui/AvatarActionsMenu';
 
 interface Props {
   user: User;

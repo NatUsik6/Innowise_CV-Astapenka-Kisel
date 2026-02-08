@@ -3,16 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { useParams } from 'next/navigation';
+import { currentUserMock } from '@/entities/auth/model/mock';
 
-import { User } from '@/app/entities/user/model/types';
-import {
-  getDepartmentsMock,
-  getPositionsMock,
-  getUserMock,
-} from '@/app/entities/user/api/mock';
-import { currentUserMock } from '@/app/entities/auth/model/mock';
-
-import { ProfileForm } from '@/app/features/update-profile/ui/ProfileForm';
+import { ProfileForm } from '@/features/update-profile/ui/ProfileForm';
 import { UserProfileHeader } from '@/widgets/user-profile/ui/UserProfileHeader';
 
 import {
@@ -21,6 +14,8 @@ import {
   actionsWrapperSx,
   updateButtonSx,
 } from './ProfilePage.styles';
+import { User } from '@/entities/user/model/types';
+import { getDepartmentsMock, getPositionsMock, getUserMock } from '@/entities/user/api/mock';
 
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();

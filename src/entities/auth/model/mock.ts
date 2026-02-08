@@ -1,4 +1,4 @@
-import { User } from '@/app/entities/user/model/types';
+import { User } from "@/entities/user/model/types";
 
 export const currentUserMock: User = {
   id: '1', // менять на другой id, чтобы проверить read-only
