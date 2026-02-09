@@ -39,5 +39,11 @@ export function useUpdateUser() {
   return useMutation<UpdateUserResult, UpdateUserArgs>(UPDATE_USER, {
     refetchQueries: [{ query: USERS_QUERY }],
     awaitRefetchQueries: true,
+    update(cache, { data }) {
+      if (data?.updateUser) {
+        cache.evict({ fieldName: 'users' });
+        cache.gc();
+      }
+    },
   });
 }

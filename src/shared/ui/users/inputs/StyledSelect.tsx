@@ -6,37 +6,38 @@ import {
   Select,
   SelectProps,
 } from '@mui/material';
-import { PropsWithChildren } from 'react';
+import { ReactNode } from 'react';
 
 const borderColor = 'rgba(146, 146, 146, 0.7)';
 const bgColor = 'rgba(53, 53, 53, 1)';
 const textColor = '#fff';
 const disabledTextColor = '#9e9e9e';
 
-type StyledSelectProps = PropsWithChildren<
-  SelectProps<string> & {
-    label: string;
-  }
->;
+interface StyledSelectProps extends Omit<SelectProps<string>, 'label'> {
+  label: string;
+  children: ReactNode;
+}
 
 export const StyledSelect = ({
   label,
   children,
+  disabled,
+  sx,
+  value,
   ...props
 }: StyledSelectProps) => {
+  const labelId = `select-label-${label.replace(/\s+/g, '-').toLowerCase()}`;
+
   return (
     <FormControl fullWidth>
       <InputLabel
-        shrink
+        id={labelId}
         sx={{
           color: disabledTextColor,
           backgroundColor: bgColor,
           px: 0.5,
           '&.Mui-focused': {
             color: disabledTextColor,
-          },
-          '&.MuiInputLabel-shrink': {
-            transform: 'translate(14px, -9px) scale(0.75)',
           },
         }}
       >
@@ -45,16 +46,14 @@ export const StyledSelect = ({
 
       <Select
         {...props}
+        labelId={labelId}
         label={label}
+        value={value}
+        disabled={disabled}
         sx={{
           backgroundColor: bgColor,
-          color: props.disabled
-            ? disabledTextColor
-            : textColor,
-
-          WebkitTextFillColor: props.disabled
-            ? disabledTextColor
-            : textColor,
+          color: disabled ? disabledTextColor : textColor,
+          WebkitTextFillColor: disabled ? disabledTextColor : textColor,
 
           '& .MuiOutlinedInput-notchedOutline': {
             borderColor,
@@ -67,32 +66,32 @@ export const StyledSelect = ({
           },
 
           '& .MuiSelect-icon': {
-            color: props.disabled
-              ? disabledTextColor
-              : textColor,
+            color: disabled ? disabledTextColor : textColor,
           },
 
           '&.Mui-disabled': {
             opacity: 1,
           },
 
-          ...props.sx,
+          ...sx,
         }}
         MenuProps={{
           PaperProps: {
             sx: {
               backgroundColor: bgColor,
               border: `1px solid ${borderColor}`,
+              maxHeight: 300,
 
               '& .MuiMenuItem-root': {
                 color: textColor,
                 '&:hover': {
-                  backgroundColor:
-                    'rgba(146,146,146,0.15)',
+                  backgroundColor: 'rgba(146,146,146,0.15)',
                 },
                 '&.Mui-selected': {
-                  backgroundColor:
-                    'rgba(146,146,146,0.25)',
+                  backgroundColor: 'rgba(146,146,146,0.25)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(146,146,146,0.35)',
+                  },
                 },
               },
             },
@@ -104,4 +103,3 @@ export const StyledSelect = ({
     </FormControl>
   );
 };
-

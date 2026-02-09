@@ -7,9 +7,9 @@ export const mapUserFromAPI = (apiUser: UserAPI): User => {
     firstName: apiUser.profile.first_name,
     lastName: apiUser.profile.last_name,
     department: apiUser.department?.id ?? '',
-    department_name: apiUser.department?.name ?? '',
+    department_name: apiUser.department?.name ?? 'Not assigned',
     position: apiUser.position?.id ?? '',
-    position_name: apiUser.position?.name ?? '',
+    position_name: apiUser.position?.name ?? 'Not assigned',
     role: apiUser.role,
     avatar: apiUser.profile.avatar,
   };

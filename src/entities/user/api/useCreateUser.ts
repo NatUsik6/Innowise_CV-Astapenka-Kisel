@@ -39,5 +39,11 @@ export function useCreateUser() {
   return useMutation<CreateUserResult, CreateUserArgs>(CREATE_USER, {
     refetchQueries: [{ query: USERS_QUERY }],
     awaitRefetchQueries: true,
+    update(cache, { data }) {
+      if (data?.createUser) {
+        cache.evict({ fieldName: 'users' });
+        cache.gc();
+      }
+    },
   });
 }

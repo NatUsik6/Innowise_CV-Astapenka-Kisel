@@ -1,27 +1,17 @@
 'use client';
 
-import { Box, MenuItem } from '@mui/material';
-
-import { User } from '@/entities/user/model/types';
+import { Box, MenuItem, SxProps, Theme } from '@mui/material';
+import { User, UpdateUserFormData } from '@/entities/user/model/types';
 import { StyledTextField } from '@/shared/ui/users/inputs/StyledTextField';
 import { StyledSelect } from '@/shared/ui/users/inputs/StyledSelect';
 import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
 import { usePositions } from '@/entities/user/api/position/api/usePositions';
 
-export type UpdateUserFormData = {
-  firstName: string;
-  lastName: string;
-  departmentId: string;
-  positionId: string;
-  email: string;
-  role: 'Admin' | 'Employee';
-};
-
 interface Props {
   user: User;
   formData: UpdateUserFormData;
-  onChange: (field: keyof UpdateUserFormData, value: string) => void;
-  formGridSx?: any;
+  onChange: (field: keyof UpdateUserFormData, value: string | undefined) => void;
+  formGridSx?: SxProps<Theme>;
 }
 
 export const UpdateUserForm = ({
@@ -37,7 +27,7 @@ export const UpdateUserForm = ({
     <Box sx={formGridSx}>
       <StyledTextField
         label="Email"
-        value={user.email}
+        value={formData.email}
         disabled
       />
 
@@ -47,7 +37,7 @@ export const UpdateUserForm = ({
         type="password"
         disabled
       />
-      
+
       <StyledTextField
         label="First Name"
         value={formData.firstName}
@@ -62,13 +52,18 @@ export const UpdateUserForm = ({
 
       <StyledSelect
         label="Department"
-        value={formData.departmentId}
-        onChange={e => onChange('departmentId', e.target.value)}
+        value={formData.departmentId ?? ''}
+        onChange={e => {
+          const value = e.target.value;
+          onChange('departmentId', value === '' ? undefined : value);
+        }}
         disabled={depsLoading}
       >
-        <MenuItem value="">None</MenuItem>
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
         {departments.map(dep => (
-          <MenuItem key={dep.id} value={dep.id}>
+          <MenuItem key={dep.id} value={String(dep.id)}>
             {dep.name}
           </MenuItem>
         ))}
@@ -76,18 +71,22 @@ export const UpdateUserForm = ({
 
       <StyledSelect
         label="Position"
-        value={formData.positionId}
-        onChange={e => onChange('positionId', e.target.value)}
+        value={formData.positionId ?? ''}
+        onChange={e => {
+          const value = e.target.value;
+          onChange('positionId', value === '' ? undefined : value);
+        }}
         disabled={posLoading}
       >
-        <MenuItem value="">None</MenuItem>
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
         {positions.map(pos => (
-          <MenuItem key={pos.id} value={pos.id}>
+          <MenuItem key={pos.id} value={String(pos.id)}>
             {pos.name}
           </MenuItem>
         ))}
       </StyledSelect>
-
 
       <StyledSelect
         label="Role"

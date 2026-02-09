@@ -26,5 +26,6 @@ export const createUserSchema = z.object({
 
   departmentId: z.string().optional(),
   positionId: z.string().optional(),
+  
   role: z.enum(['Admin', 'Employee']),
 });

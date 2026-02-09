@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -35,19 +35,34 @@ interface Props {
   onSubmit?: () => void;
 }
 
+interface GraphQLError {
+  message: string;
+  extensions?: {
+    response?: {
+      message?: string | string[];
+    };
+  };
+}
+
+interface ErrorWithGraphQL extends Error {
+  graphQLErrors?: GraphQLError[];
+}
+
 export const CreateUserModal = ({ open, onClose, onSubmit }: Props) => {
   const [createUser, { loading: creating }] = useCreateUser();
 
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success');
 
+  const wasOpen = useRef(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty },
     watch,
-    setValue,
     reset,
+    control,
   } = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
@@ -55,13 +70,28 @@ export const CreateUserModal = ({ open, onClose, onSubmit }: Props) => {
       password: '',
       firstName: '',
       lastName: '',
-      departmentId: '',
-      positionId: '',
+      departmentId: undefined,
+      positionId: undefined,
       role: 'Employee',
     },
   });
 
   const password = watch('password');
+
+  useEffect(() => {
+    if (open && !wasOpen.current) {
+      reset({
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        departmentId: undefined,
+        positionId: undefined,
+        role: 'Employee',
+      });
+    }
+    wasOpen.current = open;
+  }, [open, reset]);
 
   const submitHandler = async (data: CreateUserFormValues) => {
     const input: CreateUserInput = {
@@ -75,22 +105,39 @@ export const CreateUserModal = ({ open, onClose, onSubmit }: Props) => {
       },
       role: data.role,
       cvsIds: [],
-      departmentId: data.departmentId || undefined,
-      positionId: data.positionId || undefined,
+      departmentId: (data.departmentId && data.departmentId !== '') ? data.departmentId : null,
+      positionId: (data.positionId && data.positionId !== '') ? data.positionId : null,
     };
 
     try {
       await createUser({
         variables: { user: input },
       });
-
+      
       setAlertMessage('User created successfully');
       setAlertSeverity('success');
-      reset();
       onClose();
       onSubmit?.();
     } catch (err) {
-      setAlertMessage(err instanceof Error ? err.message : 'Failed to create user');
+      let errorMessage = 'Failed to create user';
+      
+      if (err instanceof Error) {
+        const graphQLError = (err as ErrorWithGraphQL).graphQLErrors?.[0];
+        
+        if (graphQLError) {
+          const response = graphQLError.extensions?.response;
+          if (response?.message) {
+            const messages = response.message;
+            errorMessage = Array.isArray(messages) ? messages.join(', ') : messages;
+          } else {
+            errorMessage = graphQLError.message || err.message;
+          }
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
+      setAlertMessage(errorMessage);
       setAlertSeverity('error');
     }
   };
@@ -118,7 +165,7 @@ export const CreateUserModal = ({ open, onClose, onSubmit }: Props) => {
             <CreateUserForm
               register={register}
               watch={watch}
-              setValue={setValue}
+              control={control}
               errors={errors}
               formGridSx={formGridSx}
             />

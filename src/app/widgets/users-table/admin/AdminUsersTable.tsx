@@ -11,6 +11,8 @@ import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
 
 import { useUsers } from '@/entities/user/api/useUsers';
 import { useDeleteUser } from '@/entities/user/api/useDeleteUser';
+import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
+import { usePositions } from '@/entities/user/api/position/api/usePositions';
 
 import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
 import { AdminUserActions } from './AdminUserActions';
@@ -26,8 +28,10 @@ export const AdminUsersTable = ({
   createModalOpen,
   onCloseCreateModal,
 }: Props) => {
-  const { users, loading, error } = useUsers();
+  const { users, loading, error, refetch } = useUsers();
   const [deleteUser] = useDeleteUser();
+  useDepartments();
+  usePositions();
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -37,8 +41,9 @@ export const AdminUsersTable = ({
   const [alertSeverity, setAlertSeverity] = useState<'success' | 'error'>('success');
 
   const handleUpdateUser = useCallback(() => {
+    refetch();
     setOpenUpdate(false);
-  }, []);
+  }, [refetch]);
 
   const handleDeleteUser = useCallback(async () => {
     if (!activeUser) return;
@@ -50,15 +55,17 @@ export const AdminUsersTable = ({
       setAlertMessage('User deleted successfully');
       setAlertSeverity('success');
       setOpenDelete(false);
+      refetch();
     } catch (err) {
       setAlertMessage(err instanceof Error ? err.message : 'Failed to delete user');
       setAlertSeverity('error');
     }
-  }, [activeUser, deleteUser]);
+  }, [activeUser, deleteUser, refetch]);
 
   const handleCreateUser = useCallback(() => {
+    refetch();
     onCloseCreateModal();
-  }, [onCloseCreateModal]);
+  }, [onCloseCreateModal, refetch]);
 
   if (loading) {
     return <StatusText>Loading...</StatusText>;

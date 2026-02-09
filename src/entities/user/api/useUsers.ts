@@ -33,7 +33,7 @@ export const USERS_QUERY = gql`
 
 export function useUsers() {
   const { data, loading, error, refetch } = useQuery<UsersResult>(USERS_QUERY, {
-    fetchPolicy: 'cache-first', 
+    fetchPolicy: 'network-only', 
   });
 
   return {

@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, MenuItem } from '@mui/material';
-import { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors } from 'react-hook-form';
+import { Box, MenuItem, SxProps, Theme } from '@mui/material';
+import { UseFormRegister, UseFormWatch, FieldErrors, Control, Controller } from 'react-hook-form';
 
 import { StyledTextField } from '@/shared/ui/users/inputs/StyledTextField';
 import { StyledSelect } from '@/shared/ui/users/inputs/StyledSelect';
@@ -21,15 +21,15 @@ export type CreateUserFormValues = {
 interface Props {
   register: UseFormRegister<CreateUserFormValues>;
   watch: UseFormWatch<CreateUserFormValues>;
-  setValue: UseFormSetValue<CreateUserFormValues>;
+  control: Control<CreateUserFormValues>;
   errors: FieldErrors<CreateUserFormValues>;
-  formGridSx?: any;
+  formGridSx?: SxProps<Theme>;
 }
 
 export const CreateUserForm = ({
   register,
   watch,
-  setValue,
+  control,
   errors,
   formGridSx,
 }: Props) => {
@@ -67,54 +67,70 @@ export const CreateUserForm = ({
         helperText={errors.lastName?.message}
       />
 
-      <StyledSelect
-        label="Department"
-        value={watch('departmentId') ?? ''}
-        onChange={e =>
-          setValue('departmentId', e.target.value, {
-            shouldDirty: true,
-          })
-        }
-        disabled={depsLoading}
-      >
-        <MenuItem value="">None</MenuItem>
-        {departments.map(dep => (
-          <MenuItem key={dep.id} value={dep.id}>
-            {dep.name}
-          </MenuItem>
-        ))}
-      </StyledSelect>
+      <Controller
+        name="departmentId"
+        control={control}
+        render={({ field }) => (
+          <StyledSelect
+            label="Department"
+            value={field.value ?? ''}
+            onChange={e => {
+              const value = e.target.value;
+              field.onChange(value === '' ? undefined : value);
+            }}
+            disabled={depsLoading}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {departments.map(dep => (
+              <MenuItem key={dep.id} value={String(dep.id)}>
+                {dep.name}
+              </MenuItem>
+            ))}
+          </StyledSelect>
+        )}
+      />
 
-      <StyledSelect
-        label="Position"
-        value={watch('positionId') ?? ''}
-        onChange={e =>
-          setValue('positionId', e.target.value, {
-            shouldDirty: true,
-          })
-        }
-        disabled={posLoading}
-      >
-        <MenuItem value="">None</MenuItem>
-        {positions.map(pos => (
-          <MenuItem key={pos.id} value={pos.id}>
-            {pos.name}
-          </MenuItem>
-        ))}
-      </StyledSelect>
+      <Controller
+        name="positionId"
+        control={control}
+        render={({ field }) => (
+          <StyledSelect
+            label="Position"
+            value={field.value ?? ''}
+            onChange={e => {
+              const value = e.target.value;
+              field.onChange(value === '' ? undefined : value);
+            }}
+            disabled={posLoading}
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {positions.map(pos => (
+              <MenuItem key={pos.id} value={String(pos.id)}>
+                {pos.name}
+              </MenuItem>
+            ))}
+          </StyledSelect>
+        )}
+      />
 
-      <StyledSelect
-        label="Role"
-        value={watch('role')}
-        onChange={e =>
-          setValue('role', e.target.value as 'Admin' | 'Employee', {
-            shouldDirty: true,
-          })
-        }
-      >
-        <MenuItem value="Employee">Employee</MenuItem>
-        <MenuItem value="Admin">Admin</MenuItem>
-      </StyledSelect>
+      <Controller
+        name="role"
+        control={control}
+        render={({ field }) => (
+          <StyledSelect
+            label="Role"
+            value={field.value}
+            onChange={e => field.onChange(e.target.value as 'Admin' | 'Employee')}
+          >
+            <MenuItem value="Employee">Employee</MenuItem>
+            <MenuItem value="Admin">Admin</MenuItem>
+          </StyledSelect>
+        )}
+      />
     </Box>
   );
 };

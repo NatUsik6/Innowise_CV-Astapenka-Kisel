@@ -48,22 +48,31 @@ export interface CreateUserInput {
     first_name: string;
     last_name: string;
   };
-  cvsIds: string[]; 
-  departmentId?: string; 
-  positionId?: string; 
-  role: UserRole; 
+  cvsIds: string[];
+  departmentId?: string | null;
+  positionId?: string | null;
+  role: UserRole;
 }
 
 export interface UpdateUserInput {
-  userId: string; 
-  cvsIds?: string[]; 
-  departmentId?: string; 
-  positionId?: string;
-  role?: UserRole; 
+  userId: string;
+  cvsIds?: string[];
+  departmentId?: string | null;
+  positionId?: string | null;
+  role?: UserRole;
 }
 
 export interface UpdateProfileInput {
   userId: string;
-  first_name?: string; 
-  last_name?: string; 
+  first_name?: string;
+  last_name?: string;
+}
+
+export interface UpdateUserFormData {
+  firstName: string;
+  lastName: string;
+  departmentId?: string;
+  positionId?: string;
+  role: UserRole;
+  email: string;
 }

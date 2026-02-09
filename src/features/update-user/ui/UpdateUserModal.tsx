@@ -11,11 +11,11 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { User, UpdateUserInput, UpdateProfileInput } from '@/entities/user/model/types';
+import { User, UpdateUserInput, UpdateProfileInput, UpdateUserFormData } from '@/entities/user/model/types';
 import { useUpdateUser } from '@/entities/user/api/useUpdateUser';
 import { useUpdateProfile } from '@/entities/user/api/useUpdateProfile';
 import { ActionSnackbar } from '@/shared/ui/users/ActionSnackbar/ActionSnackbar';
-import { UpdateUserForm, UpdateUserFormData } from './UpdateUserForm';
+import { UpdateUserForm } from './UpdateUserForm';
 
 import {
   dialogPaperSx,
@@ -34,11 +34,24 @@ interface Props {
   onSubmit?: () => void;
 }
 
+interface GraphQLError {
+  message: string;
+  extensions?: {
+    response?: {
+      message?: string | string[];
+    };
+  };
+}
+
+interface ErrorWithGraphQL extends Error {
+  graphQLErrors?: GraphQLError[];
+}
+
 const EMPTY_FORM: UpdateUserFormData = {
   firstName: '',
   lastName: '',
-  departmentId: '',
-  positionId: '',
+  departmentId: undefined,
+  positionId: undefined,
   role: 'Employee',
   email: '',
 };
@@ -58,10 +71,10 @@ export const UpdateUserModal = ({ open, user, onClose, onSubmit }: Props) => {
       setForm({
         firstName: user.firstName,
         lastName: user.lastName,
-        departmentId: user.department || '',
-        positionId: user.position || '',
+        departmentId: user.department || undefined,
+        positionId: user.position || undefined,
         role: user.role,
-        email: user.email || '', 
+        email: user.email || '',
       });
       setIsDirty(false);
     } else {
@@ -72,7 +85,7 @@ export const UpdateUserModal = ({ open, user, onClose, onSubmit }: Props) => {
 
   if (!user) return null;
 
-  const handleChange = (field: keyof UpdateUserFormData, value: string) => {
+  const handleChange = (field: keyof UpdateUserFormData, value: string | undefined) => {
     setForm(prev => ({ ...prev, [field]: value }));
     setIsDirty(true);
   };
@@ -111,11 +124,15 @@ export const UpdateUserModal = ({ open, user, onClose, onSubmit }: Props) => {
         }
 
         if (form.departmentId !== user.department) {
-          userInput.departmentId = form.departmentId || undefined;
+          userInput.departmentId = (form.departmentId && form.departmentId !== '') 
+            ? form.departmentId 
+            : null;
         }
 
         if (form.positionId !== user.position) {
-          userInput.positionId = form.positionId || undefined;
+          userInput.positionId = (form.positionId && form.positionId !== '') 
+            ? form.positionId 
+            : null;
         }
 
         await updateUser({
@@ -128,7 +145,25 @@ export const UpdateUserModal = ({ open, user, onClose, onSubmit }: Props) => {
       onClose();
       onSubmit?.();
     } catch (err) {
-      setAlertMessage(err instanceof Error ? err.message : 'Failed to update user');
+      let errorMessage = 'Failed to update user';
+      
+      if (err instanceof Error) {
+        const graphQLError = (err as ErrorWithGraphQL).graphQLErrors?.[0];
+        
+        if (graphQLError) {
+          const response = graphQLError.extensions?.response;
+          if (response?.message) {
+            const messages = response.message;
+            errorMessage = Array.isArray(messages) ? messages.join(', ') : messages;
+          } else {
+            errorMessage = graphQLError.message || err.message;
+          }
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
+      setAlertMessage(errorMessage);
       setAlertSeverity('error');
     }
   };
