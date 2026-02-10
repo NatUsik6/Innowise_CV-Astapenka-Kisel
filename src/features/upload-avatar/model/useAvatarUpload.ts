@@ -2,7 +2,6 @@ import { useDeleteAvatar } from '@/entities/user/api/avatar/useDeleteAvatar';
 import { useUploadAvatar } from '@/entities/user/api/avatar/useUploadAvatar';
 import { useState } from 'react';
 
-
 const MAX_SIZE = 500 * 1024;
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
 
@@ -27,7 +26,7 @@ const toBase64 = (file: File): Promise<string> =>
     reader.readAsDataURL(file);
     reader.onload = () => {
       const result = reader.result as string;
-      resolve(result.split(',')[1]);
+      resolve(result); 
     };
     reader.onerror = reject;
   });
@@ -36,8 +35,8 @@ export const useAvatarUpload = ({ userId, onSuccess }: UseAvatarUploadParams) =>
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const [uploadAvatarMutation] = useUploadAvatar(userId);
-  const [deleteAvatarMutation] = useDeleteAvatar(userId);
+  const [uploadAvatarMutation] = useUploadAvatar();
+  const [deleteAvatarMutation] = useDeleteAvatar();
 
   const upload = async (file: File) => {
     const validationError = validateFile(file);
@@ -49,16 +48,18 @@ export const useAvatarUpload = ({ userId, onSuccess }: UseAvatarUploadParams) =>
     try {
       setLoading(true);
       const base64 = await toBase64(file);
+
       const { data } = await uploadAvatarMutation({
         variables: {
           avatar: {
-            userId,
-            base64,
+            userId,   
+            base64,   
             size: file.size,
             type: file.type,
           },
         },
       });
+
       onSuccess(data?.uploadAvatar);
     } catch {
       setError('Failed to upload avatar.');

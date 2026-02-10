@@ -1,10 +1,9 @@
 import { gql } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
-import { USER_QUERY } from '../useUser';
 
 type UploadAvatarArgs = {
   avatar: {
-    userId: string; 
+    userId: string;
     base64: string;
     size: number;
     type: string;
@@ -21,11 +20,6 @@ const UPLOAD_AVATAR = gql`
   }
 `;
 
-export function useUploadAvatar(userId: string) {
-  return useMutation<UploadAvatarResult, UploadAvatarArgs>(UPLOAD_AVATAR, {
-    refetchQueries: [
-      { query: USER_QUERY, variables: { userId } },
-    ],
-    awaitRefetchQueries: true,
-  });
+export function useUploadAvatar() {
+  return useMutation<UploadAvatarResult, UploadAvatarArgs>(UPLOAD_AVATAR);
 }

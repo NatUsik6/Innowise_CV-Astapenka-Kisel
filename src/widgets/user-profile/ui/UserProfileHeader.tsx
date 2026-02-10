@@ -33,7 +33,7 @@ export const UserProfileHeader = ({ user, canEdit, onAvatarChange }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const { upload, remove, error, resetError } = useAvatarUpload({
-    userId: user.id,
+    userId: user.profile.id,
     onSuccess: onAvatarChange,
   });
 

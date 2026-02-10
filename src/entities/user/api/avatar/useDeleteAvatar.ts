@@ -1,10 +1,9 @@
 import { gql } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
-import { USER_QUERY } from '../useUser';
 
 type DeleteAvatarArgs = {
   avatar: {
-    userId: string; 
+    userId: string;
   };
 };
 
@@ -14,11 +13,6 @@ const DELETE_AVATAR = gql`
   }
 `;
 
-export function useDeleteAvatar(userId: string) {
-  return useMutation<void, DeleteAvatarArgs>(DELETE_AVATAR, {
-    refetchQueries: [
-      { query: USER_QUERY, variables: { userId } },
-    ],
-    awaitRefetchQueries: true,
-  });
+export function useDeleteAvatar() {
+  return useMutation<void, DeleteAvatarArgs>(DELETE_AVATAR);
 }
