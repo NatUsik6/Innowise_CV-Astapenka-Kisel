@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { User } from '@/entities/user/model/types';
 import { UsersTable } from '../ui/UsersTable';
 import { useSession } from '@/entities/session/model/useSession';
-import { useUsers } from '@/entities/user/api/useUsers';
+import { useUsers } from '@/entities/user/api/users/useUsers';
 import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
 import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
 

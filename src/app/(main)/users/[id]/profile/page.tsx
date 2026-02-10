@@ -1,12 +1,16 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
 import { useParams } from 'next/navigation';
-import { currentUserMock } from '@/entities/auth/model/mock';
 
 import { ProfileForm } from '@/features/update-profile/ui/ProfileForm';
 import { UserProfileHeader } from '@/widgets/user-profile/ui/UserProfileHeader';
+import { useUser } from '@/entities/user/api/useUser';
+import { useCurrentUser } from '@/entities/auth/model/useCurrentUser';
+import { User } from '@/entities/user/model/types';
+import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
+import { usePositions } from '@/entities/user/api/position/api/usePositions';
 
 import {
   pageContainerSx,
@@ -14,88 +18,125 @@ import {
   actionsWrapperSx,
   updateButtonSx,
 } from './ProfilePage.styles';
-import { User } from '@/entities/user/model/types';
-import { getDepartmentsMock, getPositionsMock, getUserMock } from '@/entities/user/api/mock';
+import { useUpdateProfile } from '@/entities/user/api/users/useUpdateProfile';
+import { useUpdateUser } from '@/entities/user/api/users/useUpdateUser';
 
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>();
 
-  const [savedUser, setSavedUser] =
-    useState<User | null>(null);
-  const [draftUser, setDraftUser] =
-    useState<User | null>(null);
+  const { user: pageUser, loading: userLoading, refetch } = useUser(id);
+  const { user: currentUser, loading: authLoading } = useCurrentUser();
 
-  const [departments, setDepartments] =
-    useState<string[]>([]);
-  const [positions, setPositions] =
-    useState<string[]>([]);
+  const { departments } = useDepartments();
+  const { positions } = usePositions();
+
+  const [draftUser, setDraftUser] = useState<User | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const [updateProfile, { loading: profileLoading }] = useUpdateProfile(id);
+  const [updateUser, { loading: userUpdating }] = useUpdateUser();
 
   useEffect(() => {
-    getUserMock(id).then(user => {
-      setSavedUser(user);
-      setDraftUser(user);
-    });
+    if (pageUser) {
+      setDraftUser(pageUser);
+    }
+  }, [pageUser]);
 
-    setDepartments(getDepartmentsMock());
-    setPositions(getPositionsMock());
-  }, [id]);
-
-  const canEditProfile =
-    currentUserMock.role === 'ADMIN' ||
-    currentUserMock.id === savedUser?.id;
+  const isAdmin = currentUser?.role === 'Admin';
+  const canEdit = isAdmin || currentUser?.id === pageUser?.id;
 
   const isChanged = useMemo(() => {
-    if (!savedUser || !draftUser) return false;
-
+    if (!pageUser || !draftUser) return false;
     return (
-      savedUser.profile.firstName !==
-        draftUser.profile.firstName ||
-      savedUser.profile.lastName !==
-        draftUser.profile.lastName ||
-      savedUser.department_name !==
-        draftUser.department_name ||
-      savedUser.position_name !==
-        draftUser.position_name ||
-      savedUser.profile.avatar !==
-        draftUser.profile.avatar
+      pageUser.profile.firstName !== draftUser.profile.firstName ||
+      pageUser.profile.lastName !== draftUser.profile.lastName ||
+      pageUser.department !== draftUser.department ||
+      pageUser.position !== draftUser.position
     );
-  }, [savedUser, draftUser]);
+  }, [pageUser, draftUser]);
 
-  const handleProfileChange = (
-    data: Partial<User>
-  ) => {
+  const handleProfileChange = (data: Partial<User>) => {
+    setDraftUser(prev => {
+      if (!prev) return prev;
+      
+      return {
+        ...prev,
+        ...data,
+        profile: data.profile ? {
+          ...prev.profile,
+          ...data.profile,
+          id: prev.profile.id,
+        } : prev.profile,
+      };
+    });
+  };
+
+  const handleAvatarChange = (avatar?: string) => {
     setDraftUser(prev =>
-      prev ? { ...prev, ...data } : prev
+      prev ? { ...prev, profile: { ...prev.profile, avatar } } : prev,
     );
   };
 
-  const handleAvatarChange = (
-    avatar?: string
-  ) => {
-    setDraftUser(prev =>
-      prev
-        ? {
-            ...prev,
+  const handleUpdate = async () => {
+    if (!pageUser || !draftUser) return;
+
+    try {
+      const nameChanged =
+        pageUser.profile.firstName !== draftUser.profile.firstName ||
+        pageUser.profile.lastName !== draftUser.profile.lastName;
+
+      if (nameChanged) {
+        await updateProfile({
+          variables: {
             profile: {
-              ...prev.profile,
-              avatar,
+              userId: pageUser.id,
+              first_name: draftUser.profile.firstName,
+              last_name: draftUser.profile.lastName,
             },
-          }
-        : prev
+          },
+        });
+      }
+
+      const orgChanged =
+        pageUser.department !== draftUser.department ||
+        pageUser.position !== draftUser.position;
+
+      if (orgChanged) {
+        await updateUser({
+          variables: {
+            user: {
+              userId: pageUser.id,
+              departmentId: draftUser.department || null,
+              positionId: draftUser.position || null,
+            },
+          },
+        });
+      }
+
+      await refetch();
+    } catch (error) {
+      setErrorMsg('Error updating profile. Please try again.');
+    }
+  };
+
+  const isLoading = userLoading || authLoading;
+  const isSaving = profileLoading || userUpdating;
+
+  if (isLoading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={10}>
+        <CircularProgress />
+      </Box>
     );
-  };
+  }
 
-  const handleUpdate = () => {
-    if (!savedUser || !draftUser) return;
-    setSavedUser(draftUser);
-  };
-
-  if (!savedUser || !draftUser) return null;
+  if (!draftUser || !pageUser) return null;
 
   return (
     <Box sx={pageContainerSx}>
       <UserProfileHeader
         user={draftUser}
+        canEdit={canEdit}
         onAvatarChange={handleAvatarChange}
       />
 
@@ -105,21 +146,38 @@ export default function ProfilePage() {
           departments={departments}
           positions={positions}
           onChange={handleProfileChange}
-          readOnly={!canEditProfile}
+          readOnly={!canEdit}
+          isAdmin={isAdmin}
+          isOwnProfile={currentUser?.id === pageUser?.id} 
         />
       </Box>
 
-      {canEditProfile && (
+      {canEdit && (
         <Box sx={actionsWrapperSx}>
           <Button
-            disabled={!isChanged}
+            disabled={!isChanged || isSaving}
             onClick={handleUpdate}
             sx={updateButtonSx(isChanged)}
           >
-            UPDATE
+            {isSaving ? 'SAVING...' : 'UPDATE'}
           </Button>
         </Box>
       )}
+
+      <Snackbar
+        open={!!errorMsg}
+        autoHideDuration={4000}
+        onClose={() => setErrorMsg(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity="error"
+          onClose={() => setErrorMsg(null)}
+          sx={{ width: '100%' }}
+        >
+          {errorMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

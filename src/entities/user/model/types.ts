@@ -1,6 +1,7 @@
 export type UserRole = 'Admin' | 'Employee';
 
 export interface UserProfile {
+  id: string;          
   first_name: string;
   last_name: string;
   full_name: string;
@@ -19,6 +20,7 @@ export interface Position {
 
 export interface UserAPI {
   id: string;
+  created_at: string;
   email: string;
   role: UserRole;
   profile: UserProfile;
@@ -28,15 +30,19 @@ export interface UserAPI {
 
 export interface User {
   id: string;
+  created_at: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  role: UserRole;
+  profile: {
+    id: string;       
+    firstName: string;
+    lastName: string;
+    avatar?: string;
+  };
   department: string;
   department_name: string;
   position: string;
   position_name: string;
-  role: UserRole;
-  avatar?: string;
 }
 
 export interface CreateUserInput {
@@ -63,9 +69,9 @@ export interface UpdateUserInput {
 }
 
 export interface UpdateProfileInput {
-  userId: string;
-  first_name?: string;
-  last_name?: string;
+  userId: string;  
+  first_name?: string | null;
+  last_name?: string | null;
 }
 
 export interface UpdateUserFormData {

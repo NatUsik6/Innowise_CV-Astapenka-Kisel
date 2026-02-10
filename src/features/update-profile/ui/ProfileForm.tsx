@@ -3,17 +3,26 @@ import { Box, MenuItem } from '@mui/material';
 import { StyledSelect } from '@/shared/ui/inputs/StyledSelect';
 import { StyledTextField } from '@/shared/ui/inputs/StyledTextField';
 
-import {
-  formGridSx,
-  menuItemSx,
-} from './ProfileForm.styles';
+import { formGridSx, menuItemSx } from './ProfileForm.styles';
 import { User } from '@/entities/user/model/types';
+
+interface Department {
+  id: string;
+  name: string;
+}
+
+interface Position {
+  id: string;
+  name: string;
+}
 
 interface Props {
   user: User;
-  departments: string[];
-  positions: string[];
+  departments: Department[];
+  positions: Position[];
   readOnly: boolean;
+  isAdmin: boolean;
+  isOwnProfile: boolean; 
   onChange: (data: Partial<User>) => void;
 }
 
@@ -22,19 +31,19 @@ export const ProfileForm = ({
   departments,
   positions,
   readOnly,
+  isAdmin,
+  isOwnProfile, 
   onChange,
 }: Props) => {
-  const handleTextChange =
-    (field: 'profile.firstName' | 'profile.lastName') =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const key = field.split('.')[1] as
-        | 'firstName'
-        | 'lastName';
+  const canEdit = !readOnly && (isAdmin || isOwnProfile);
 
+  const handleTextChange =
+    (field: 'firstName' | 'lastName') =>
+    (e: ChangeEvent<HTMLInputElement>) => {
       onChange({
         profile: {
           ...user.profile,
-          [key]: e.target.value,
+          [field]: e.target.value,
         },
       });
     };
@@ -45,7 +54,7 @@ export const ProfileForm = ({
         label="First Name"
         value={user.profile.firstName}
         focusVariant="danger"
-        onChange={handleTextChange('profile.firstName')}
+        onChange={handleTextChange('firstName')}
         disabled={readOnly}
       />
 
@@ -53,68 +62,66 @@ export const ProfileForm = ({
         label="Last Name"
         value={user.profile.lastName}
         focusVariant="danger"
-        onChange={handleTextChange('profile.lastName')}
+        onChange={handleTextChange('lastName')}
         disabled={readOnly}
       />
 
-      {readOnly ? (
-        <StyledTextField
-          label="Department"
-          value={user.department_name}
-          focusVariant="danger"
-          disabled
-        />
-      ) : (
+      {canEdit ? (
         <StyledSelect
           label="Department"
-          value={user.department_name}
+          value={user.department}
           focusVariant="danger"
-          onChange={e =>
+          onChange={e => {
+            const selectedId = e.target.value as string;
+            const dep = departments.find(d => d.id === selectedId);
             onChange({
-              department_name: e.target.value as string,
-            })
-          }
+              department: selectedId,
+              department_name: dep?.name ?? '',
+            });
+          }}
         >
           {departments.map(dep => (
-            <MenuItem
-              key={dep}
-              value={dep}
-              sx={menuItemSx}
-            >
-              {dep}
+            <MenuItem key={dep.id} value={dep.id} sx={menuItemSx}>
+              {dep.name}
             </MenuItem>
           ))}
         </StyledSelect>
+      ) : (
+        <StyledTextField
+          label="Department"
+          value={user.department_name}
+          focusVariant="danger"
+          disabled
+        />
       )}
 
-      {readOnly ? (
+      {canEdit ? (
+        <StyledSelect
+          label="Position"
+          value={user.position}
+          focusVariant="danger"
+          onChange={e => {
+            const selectedId = e.target.value as string;
+            const pos = positions.find(p => p.id === selectedId);
+            onChange({
+              position: selectedId,
+              position_name: pos?.name ?? '',
+            });
+          }}
+        >
+          {positions.map(pos => (
+            <MenuItem key={pos.id} value={pos.id} sx={menuItemSx}>
+              {pos.name}
+            </MenuItem>
+          ))}
+        </StyledSelect>
+      ) : (
         <StyledTextField
           label="Position"
           value={user.position_name}
           focusVariant="danger"
           disabled
         />
-      ) : (
-        <StyledSelect
-          label="Position"
-          value={user.position_name}
-          focusVariant="danger"
-          onChange={e =>
-            onChange({
-              position_name: e.target.value as string,
-            })
-          }
-        >
-          {positions.map(pos => (
-            <MenuItem
-              key={pos}
-              value={pos}
-              sx={menuItemSx}
-            >
-              {pos}
-            </MenuItem>
-          ))}
-        </StyledSelect>
       )}
     </Box>
   );

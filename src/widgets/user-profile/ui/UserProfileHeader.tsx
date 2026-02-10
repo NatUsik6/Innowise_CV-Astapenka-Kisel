@@ -1,15 +1,8 @@
 'use client';
 
-import {
-  Box,
-  Typography,
-  Snackbar,
-  Alert,
-} from '@mui/material';
+import { Box, Typography, Snackbar, Alert } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import { useRef, useState } from 'react';
-
-
 
 import {
   headerRootSx,
@@ -21,55 +14,35 @@ import {
   dateTextSx,
 } from './UserProfileHeader.styles';
 import { User } from '@/entities/user/model/types';
-import { currentUserMock } from '@/entities/auth/model/mock';
 import { useAvatarUpload } from '@/features/upload-avatar/model/useAvatarUpload';
 import { AvatarUploader } from '@/features/upload-avatar/ui/AvatarUploader';
 import { AvatarActionsMenu } from '@/features/upload-avatar/ui/AvatarActionsMenu';
 
 interface Props {
   user: User;
+  canEdit: boolean;
   onAvatarChange: (avatar?: string) => void;
 }
 
-const formatDate = (date: string) =>
-  new Date(date).toDateString();
+const formatDate = (date: string) => new Date(date).toDateString();
 
-export const UserProfileHeader = ({
-  user,
-  onAvatarChange,
-}: Props) => {
-  const currentUser = currentUserMock;
-
-  const canEdit =
-    currentUser.id === user.id ||
-    currentUser.role === 'ADMIN';
-
-  const avatarFallback =
-    user.profile.firstName?.[0]?.toUpperCase();
+export const UserProfileHeader = ({ user, canEdit, onAvatarChange }: Props) => {
+  const avatarFallback = user.profile.firstName?.[0]?.toUpperCase();
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const [anchorEl, setAnchorEl] =
-    useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const {
-    upload,
-    remove,
-    error,
-    resetError,
-  } = useAvatarUpload({
+  const { upload, remove, error, resetError } = useAvatarUpload({
+    userId: user.id,
     onSuccess: onAvatarChange,
   });
 
-  const handleAvatarClick = (
-    e: React.MouseEvent<HTMLElement>
-  ) => {
+  const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     if (!canEdit) return;
-
     if (!user.profile.avatar) {
       inputRef.current?.click();
       return;
     }
-
     setAnchorEl(e.currentTarget);
   };
 
@@ -80,11 +53,10 @@ export const UserProfileHeader = ({
     closeMenu();
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = '';
     upload(file);
   };
 
@@ -102,16 +74,10 @@ export const UserProfileHeader = ({
           </Box>
 
           {canEdit && (
-            <Box
-              sx={uploadHintSx}
-              onClick={handleAvatarClick}
-            >
+            <Box sx={uploadHintSx} onClick={handleAvatarClick}>
               <UploadIcon sx={uploadIconSx} />
-
               <Box>
-                <Typography fontWeight={500}>
-                  Upload avatar image
-                </Typography>
+                <Typography fontWeight={500}>Upload avatar image</Typography>
                 <Typography fontSize={12}>
                   png, jpg or gif no more than 0.5MB
                 </Typography>
@@ -122,17 +88,13 @@ export const UserProfileHeader = ({
 
         <Box sx={textCenterSx}>
           <Typography variant="h5">
-            {user.profile.firstName}{' '}
-            {user.profile.lastName}
+            {user.profile.firstName} {user.profile.lastName}
           </Typography>
 
-          <Typography sx={emailTextSx}>
-            {user.email}
-          </Typography>
+          <Typography sx={emailTextSx}>{user.email}</Typography>
 
           <Typography sx={dateTextSx}>
-            A member since{' '}
-            {formatDate(user.created_at)}
+            A member since {formatDate(user.created_at)}
           </Typography>
         </Box>
       </Box>
@@ -160,16 +122,9 @@ export const UserProfileHeader = ({
         open={!!error}
         autoHideDuration={4000}
         onClose={resetError}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          severity="error"
-          onClose={resetError}
-          sx={{ width: '100%' }}
-        >
+        <Alert severity="error" onClose={resetError} sx={{ width: '100%' }}>
           {error}
         </Alert>
       </Snackbar>

@@ -1,34 +1,26 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 import { useParams } from 'next/navigation';
 
 import { UserProfileTabs } from '@/widgets/user-profile/ui/UserProfileTabs';
 import { UserBreadcrumbClient } from '@/widgets/user-breadcrumb/ui/UserBreadcrumbClient';
-import { User } from '@/entities/user/model/types';
-import { getUserMock } from '@/entities/user/api/mock';
+import { useUser } from '@/entities/user/api/useUser';
 
-
-export default function UserLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function UserLayout({ children }: { children: ReactNode }) {
   const { id } = useParams<{ id: string }>();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading } = useUser(id);
 
-  useEffect(() => {
-    getUserMock(id).then(setUser);
-  }, [id]);
-
-  if (!user) {
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={10}>
         <CircularProgress />
       </Box>
     );
   }
+
+  if (!user) return null;
 
   return (
     <Box px={6} py={1}>

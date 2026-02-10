@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
-import { UserAPI } from '../model/types';
-import { mapUsersFromAPI } from '../model/mapper';
+import { UserAPI } from '../../model/types';
+import { mapUsersFromAPI } from '../../model/mapper';
 import { useQuery } from '@apollo/client/react';
 
 type UsersResult = {

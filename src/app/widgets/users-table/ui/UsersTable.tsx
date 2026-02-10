@@ -99,8 +99,8 @@ export const UsersTable = ({
                 <UserAvatar user={user} />
               </TableCell>
 
-              <TableCell sx={bodyCellSx}>{user.firstName}</TableCell>
-              <TableCell sx={bodyCellSx}>{user.lastName}</TableCell>
+              <TableCell sx={bodyCellSx}>{user.profile.firstName}</TableCell>
+              <TableCell sx={bodyCellSx}>{user.profile.lastName}</TableCell>
               <TableCell sx={bodyCellSx}>{user.email}</TableCell>
               <TableCell sx={bodyCellSx}>{user.department_name}</TableCell>
               <TableCell sx={bodyCellSx}>{user.position_name}</TableCell>

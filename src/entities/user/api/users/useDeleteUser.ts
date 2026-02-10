@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
-import { USERS_QUERY } from './useUsers';
 import { useMutation } from '@apollo/client/react';
+import { USERS_QUERY } from './useUsers';
 
 type DeleteUserArgs = {
   userId: string;

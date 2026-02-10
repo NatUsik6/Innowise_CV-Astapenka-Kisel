@@ -1,19 +1,19 @@
 import { gql } from '@apollo/client';
-import { UpdateUserInput, UserAPI } from '../model/types';
+import { CreateUserInput, UserAPI } from '../../model/types';
 import { USERS_QUERY } from './useUsers';
 import { useMutation } from '@apollo/client/react';
 
-type UpdateUserArgs = {
-  user: UpdateUserInput;
+type CreateUserArgs = {
+  user: CreateUserInput;
 };
 
-type UpdateUserResult = {
-  updateUser: UserAPI;
+type CreateUserResult = {
+  createUser: UserAPI;
 };
 
-const UPDATE_USER = gql`
-  mutation UpdateUser($user: UpdateUserInput!) {
-    updateUser(user: $user) {
+const CREATE_USER = gql`
+  mutation CreateUser($user: CreateUserInput!) {
+    createUser(user: $user) {
       id
       email
       role
@@ -35,12 +35,12 @@ const UPDATE_USER = gql`
   }
 `;
 
-export function useUpdateUser() {
-  return useMutation<UpdateUserResult, UpdateUserArgs>(UPDATE_USER, {
+export function useCreateUser() {
+  return useMutation<CreateUserResult, CreateUserArgs>(CREATE_USER, {
     refetchQueries: [{ query: USERS_QUERY }],
     awaitRefetchQueries: true,
     update(cache, { data }) {
-      if (data?.updateUser) {
+      if (data?.createUser) {
         cache.evict({ fieldName: 'users' });
         cache.gc();
       }
