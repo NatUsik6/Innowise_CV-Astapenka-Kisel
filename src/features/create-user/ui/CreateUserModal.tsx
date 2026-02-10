@@ -15,7 +15,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { CreateUserInput } from '@/entities/user/model/types';
 import { createUserSchema } from '../model/createUserSchema';
-import { useCreateUser } from '@/entities/user/api/useCreateUser';
+import { useCreateUser } from '@/entities/user/api/users/useCreateUser';
 import { ActionSnackbar } from '@/shared/ui/users/ActionSnackbar/ActionSnackbar';
 import { CreateUserForm, CreateUserFormValues } from './CreateUserForm';
 

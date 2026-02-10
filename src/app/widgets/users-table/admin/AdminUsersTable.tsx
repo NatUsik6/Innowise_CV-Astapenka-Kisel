@@ -9,13 +9,13 @@ import { UpdateUserModal } from '@/features/update-user/ui/UpdateUserModal';
 import { DeleteUserModal } from '@/features/delete-user/ui/DeleteUserModal';
 import { CreateUserModal } from '@/features/create-user/ui/CreateUserModal';
 
-import { useUsers } from '@/entities/user/api/useUsers';
-import { useDeleteUser } from '@/entities/user/api/useDeleteUser';
+import { useUsers } from '@/entities/user/api/users/useUsers';
 import { useDepartments } from '@/entities/user/api/department/api/useDepartments';
 import { usePositions } from '@/entities/user/api/position/api/usePositions';
 
 import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
 import { AdminUserActions } from './AdminUserActions';
+import { useDeleteUser } from '@/entities/user/api/users/useDeleteUser';
 
 interface Props {
   search: string;

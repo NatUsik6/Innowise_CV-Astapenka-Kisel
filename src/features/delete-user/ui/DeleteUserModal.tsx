@@ -39,7 +39,7 @@ export const DeleteUserModal = ({
       <Typography sx={textSx}>
         Are you sure you want to delete{' '}
         <b>
-          {user.firstName} {user.lastName}
+          {user.profile.firstName} {user.profile.lastName}
         </b>
         ?
       </Typography>

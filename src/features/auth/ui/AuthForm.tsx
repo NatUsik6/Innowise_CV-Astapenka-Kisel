@@ -54,9 +54,14 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
     else router.push("/signup");
   };
 
-  const handleAuthSuccess = (access_token: string, refresh_token: string) => {
+  const handleAuthSuccess = (
+    access_token: string,
+    refresh_token: string,
+    userId: string,
+  ) => {
     Cookies.set("access_token", access_token);
     Cookies.set("refresh_token", refresh_token);
+    Cookies.set("user_id", userId);
     router.push("/users");
   };
 
@@ -82,7 +87,11 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
   const [executeSignup, { loading: signupLoading }] =
     useMutation<SignupResponse>(SIGNUP_MUTATION, {
       onCompleted: (data) =>
-        handleAuthSuccess(data.signup.access_token, data.signup.refresh_token),
+        handleAuthSuccess(
+          data.signup.access_token,
+          data.signup.refresh_token,
+          data.signup.user.id,
+        ),
       onError: (error) => handleAuthError(error),
     });
 
@@ -98,6 +107,7 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
           handleAuthSuccess(
             result.data.login.access_token,
             result.data.login.refresh_token,
+            result.data.login.user.id,
           );
         }
       } catch (error) {
