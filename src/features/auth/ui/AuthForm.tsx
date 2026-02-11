@@ -24,13 +24,13 @@ import {
 import {
   LOGIN_QUERY,
   SIGNUP_MUTATION,
-} from "../../../entities/session/api/queries";
+} from "../../../entities/auth/api/auth.queries";
 import { useLazyQuery, useMutation } from "@apollo/client/react";
 import { CombinedGraphQLErrors, CombinedProtocolErrors } from "@apollo/client";
 import {
   LoginResponse,
   SignupResponse,
-} from "../../../entities/session/model/types";
+} from "../../../entities/auth/model/auth.types";
 
 interface AuthInputs {
   email?: string;
@@ -66,7 +66,7 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
   };
 
   const handleAuthError = (error: unknown) => {
-    let message = "Произошла ошибка";
+    let message = "An error occurred";
     if (CombinedGraphQLErrors.is(error)) {
       message = error.errors[0]?.message || message;
     } else if (CombinedProtocolErrors.is(error)) {
@@ -123,29 +123,29 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
   return (
     <FormCard>
       <StyledTabs value={tabValue} onChange={handleTabChange} centered>
-        <StyledTab label="Войти" />
-        <StyledTab label="Создать" />
+        <StyledTab label="Log in" />
+        <StyledTab label="Sign up" />
       </StyledTabs>
 
       <AuthTitle variant="h4">
-        {mode === "login" ? "С возвращением" : "Зарегистрируйтесь"}
+        {mode === "login" ? "Welcome back" : "Register now"}
       </AuthTitle>
 
       <AuthSubtitle variant="body2">
         {mode === "login"
-          ? "Рады вас видеть! Войдите, чтобы продолжить"
-          : "Добро пожаловать! Создайте аккаунт, чтобы продолжить"}
+          ? "Hello again! Log in to continue"
+          : "Welcome! Sign up to continue"}
       </AuthSubtitle>
 
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <LoginInput
           fullWidth
-          placeholder="Почта"
+          placeholder="email"
           {...register("email", {
-            required: "Введите почту",
+            required: "Enter your email",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Некорректный email",
+              message: "Invalid email address",
             },
           })}
           error={!!errors.email}
@@ -155,11 +155,11 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
 
         <LoginInput
           fullWidth
-          placeholder="Пароль"
+          placeholder="Password"
           type={showPassword ? "text" : "password"}
           {...register("password", {
-            required: "Введите пароль",
-            minLength: { value: 8, message: "Минимум 8 символов" },
+            required: "Enter your password",
+            minLength: { value: 8, message: "Minimum 8 characters" },
           })}
           error={!!errors.password}
           helperText={errors.password?.message}
@@ -185,10 +185,10 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
         <ActionsWrapper>
           <LoginButton type="submit" variant="contained" disabled={isLoading}>
             {isLoading
-              ? "Загрузка..."
+              ? "Loading..."
               : mode === "login"
-                ? "Войти"
-                : "Создать аккаунт"}
+                ? "Log in"
+                : "Create account"}
           </LoginButton>
 
           <ForgotPasswordLink
@@ -198,7 +198,7 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
               router.push(mode === "login" ? "/auth/signup" : "/auth/login")
             }
           >
-            {mode === "login" ? "Забыли пароль" : "У меня есть аккаунт"}
+            {mode === "login" ? "Forgot password" : "I have an account"}
           </ForgotPasswordLink>
         </ActionsWrapper>
       </StyledForm>
