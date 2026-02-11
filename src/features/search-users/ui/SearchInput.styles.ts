@@ -15,6 +15,9 @@ export const searchInputSx = {
     '&:hover fieldset': {
       borderColor: 'rgba(77, 75, 75, 1)',
     },
+    '&.Mui-focused fieldset': {
+      borderColor: 'rgba(255, 255, 255, 0.5)',
+    },
   },
 
   '& input::placeholder': {

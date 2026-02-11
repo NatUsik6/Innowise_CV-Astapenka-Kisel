@@ -18,8 +18,13 @@ import {
   BackButton,
   UserName,
 } from "./AppLayout.styles";
+import { useSession } from "@/entities/session/model/useSession";
+import { usePathname, useRouter } from "next/navigation";
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const timeout = setTimeout(() => setMounted(true), 0);
@@ -33,12 +38,15 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <SidebarWrapper>
         <Box>
           <List sx={{ p: 0 }}>
-            <NavItem selected>
-              <ListItemIcon>
-                <PeopleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Employees" />
-            </NavItem>
+          <NavItem 
+            selected={pathname === '/users'}
+            onClick={() => router.push('/users')}
+          >
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Employees" />
+          </NavItem>
             <NavItem>
               <ListItemIcon>
                 <MovingIcon />
@@ -51,19 +59,20 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               </ListItemIcon>
               <ListItemText primary="Languages" />
             </NavItem>
-            <NavItem>
-              <ListItemIcon>
-                <ContactPageIcon />
-              </ListItemIcon>
+            <NavItem 
+              selected={pathname === '/cvs'} 
+              onClick={() => router.push('/cvs')}
+            >
+              <ListItemIcon><ContactPageIcon /></ListItemIcon>
               <ListItemText primary="CVs" />
             </NavItem>
           </List>
         </Box>
         <Box>
-          <UserSection>
-            <UserAvatar>R</UserAvatar>
-            <UserName variant="body2">Rostislav Harlanov</UserName>
-          </UserSection>
+          <UserAvatar>{user?.firstName?.[0] || user?.email?.[0]}</UserAvatar>
+          <UserName variant="body2">
+            {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email}
+          </UserName>
           <BottomActions>
             <BackButton size="small">
               <ArrowBackIosNewIcon />

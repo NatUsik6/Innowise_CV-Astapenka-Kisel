@@ -10,16 +10,21 @@ export const mapCvFromAPI = (apiCv: CVAPI): CV => {
     user: apiCv.user?.profile 
       ? mapUserFromAPI(apiCv.user) 
       : { 
-      id: apiCv.user.id, 
-      email: apiCv.user.email, 
-      firstName: 'Unknown', 
-      lastName: 'User', 
-      role: apiCv.user.role,
-      department: '',
-      department_name: '',
-      position: '',
-      position_name: '',
-    },
+          id: apiCv.user.id, 
+          created_at: '',
+          email: apiCv.user.email, 
+          role: apiCv.user.role,
+          profile: {
+            id: '',
+            firstName: '',
+            lastName: '',
+            avatar: '',
+          },
+          department: '',
+          department_name: '',
+          position: '',
+          position_name: '',
+        },
   };
 };
 
