@@ -1,19 +1,18 @@
 import { User, UserAPI } from "@/entities/user/model/types";
 
-export interface CVAPI {
+interface BaseCV {
   id: string;
   name: string;
   education: string;
   description: string;
+}
+
+export interface CVAPI extends BaseCV {
   user: UserAPI;
 }
 
-export interface CV {
-    id: string;
-    name: string;
-    education: string;
-    description: string;
-    user: User;
+export interface CV extends BaseCV {
+  user: User;
 }
 
 export interface CvsApiResponse {
