@@ -20,12 +20,18 @@ import {
 } from "./AppLayout.styles";
 import { useSession } from "@/entities/session/model/useSession";
 import { usePathname, useRouter } from "next/navigation";
+import { ROUTES } from "@/shared/constants/routes";
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useSession();
+  const { user } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+
+  const displayName = user?.profile?.firstName 
+    ? `${user.profile.firstName} ${user.profile.lastName || ''}`.trim()
+    : user?.email;
+
   useEffect(() => {
     const timeout = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timeout);
@@ -39,8 +45,8 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         <Box>
           <List sx={{ p: 0 }}>
           <NavItem 
-            selected={pathname === '/users'}
-            onClick={() => router.push('/users')}
+            selected={pathname === ROUTES.USERS}
+            onClick={() => router.push(ROUTES.USERS)}
           >
             <ListItemIcon>
               <PeopleIcon />
@@ -60,8 +66,8 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               <ListItemText primary="Languages" />
             </NavItem>
             <NavItem 
-              selected={pathname === '/cvs'} 
-              onClick={() => router.push('/cvs')}
+              selected={pathname === ROUTES.CVS} 
+              onClick={() => router.push(ROUTES.CVS)}
             >
               <ListItemIcon><ContactPageIcon /></ListItemIcon>
               <ListItemText primary="CVs" />
@@ -69,10 +75,12 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
           </List>
         </Box>
         <Box>
-          <UserAvatar>{user?.firstName?.[0] || user?.email?.[0]}</UserAvatar>
-          <UserName variant="body2">
-            {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.email}
-          </UserName>
+          {user && (
+            <UserSection>
+              <UserAvatar>{displayName?.[0]?.toUpperCase()}</UserAvatar>
+              <UserName variant="body2">{displayName}</UserName>
+            </UserSection>
+          )}
           <BottomActions>
             <BackButton size="small">
               <ArrowBackIosNewIcon />
