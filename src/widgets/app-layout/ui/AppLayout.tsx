@@ -18,9 +18,20 @@ import {
   BackButton,
   UserName,
 } from "./AppLayout.styles";
+import { useSession } from "@/entities/session/model/useSession";
+import { usePathname, useRouter } from "next/navigation";
+import { ROUTES } from "@/shared/constants/routes";
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+
+  const displayName = user?.profile?.firstName 
+    ? `${user.profile.firstName} ${user.profile.lastName || ''}`.trim()
+    : user?.email;
+
   useEffect(() => {
     const timeout = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timeout);
@@ -33,12 +44,15 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <SidebarWrapper>
         <Box>
           <List sx={{ p: 0 }}>
-            <NavItem selected>
-              <ListItemIcon>
-                <PeopleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Employees" />
-            </NavItem>
+          <NavItem 
+            selected={pathname === ROUTES.USERS}
+            onClick={() => router.push(ROUTES.USERS)}
+          >
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Employees" />
+          </NavItem>
             <NavItem>
               <ListItemIcon>
                 <MovingIcon />
@@ -51,19 +65,22 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
               </ListItemIcon>
               <ListItemText primary="Languages" />
             </NavItem>
-            <NavItem>
-              <ListItemIcon>
-                <ContactPageIcon />
-              </ListItemIcon>
+            <NavItem 
+              selected={pathname === ROUTES.CVS} 
+              onClick={() => router.push(ROUTES.CVS)}
+            >
+              <ListItemIcon><ContactPageIcon /></ListItemIcon>
               <ListItemText primary="CVs" />
             </NavItem>
           </List>
         </Box>
         <Box>
-          <UserSection>
-            <UserAvatar>R</UserAvatar>
-            <UserName variant="body2">Rostislav Harlanov</UserName>
-          </UserSection>
+          {user && (
+            <UserSection>
+              <UserAvatar>{displayName?.[0]?.toUpperCase()}</UserAvatar>
+              <UserName variant="body2">{displayName}</UserName>
+            </UserSection>
+          )}
           <BottomActions>
             <BackButton size="small">
               <ArrowBackIosNewIcon />

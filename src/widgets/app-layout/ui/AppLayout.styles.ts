@@ -10,6 +10,7 @@ export const RootWrapper = styled(Box)({
 
 export const SidebarWrapper = styled(Box)({
   width: '12.5rem',
+  minWidth: '12.5rem',
   backgroundColor: 'rgba(53, 53, 53, 1)',
   display: 'flex',
   flexDirection: 'column',
