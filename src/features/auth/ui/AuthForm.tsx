@@ -140,7 +140,7 @@ export const AuthForm = ({ mode }: { mode: "login" | "signup" }) => {
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         <LoginInput
           fullWidth
-          placeholder="email"
+          placeholder="Email"
           {...register("email", {
             required: "Enter your email",
             pattern: {
