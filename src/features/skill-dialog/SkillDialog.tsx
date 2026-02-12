@@ -105,9 +105,9 @@ export const SkillDialog = ({
           value={mastery}
           onChange={(e) => setMastery(e.target.value as Mastery)}
         >
-          {MASTERY_OPTIONS.map((m) => (
-            <MenuItem key={m} value={m}>
-              {m}
+          {MASTERY_OPTIONS.map((masteryLevel) => (
+            <MenuItem key={masteryLevel} value={masteryLevel}>
+              {masteryLevel}
             </MenuItem>
           ))}
         </StyledSelect>

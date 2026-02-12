@@ -4,11 +4,11 @@ import { useParams } from 'next/navigation';
 import { UserSkillsWidget } from '@/widgets/user-skills/UserSkillsWidget';
 import { Box, CircularProgress } from '@mui/material';
 import { useSession } from '@/entities/session/model/useSession';
+import { useCanEditSkills } from './hooks/useCanEditSkills';
 
 export default function UserSkillsPage() {
   const { id: userId } = useParams<{ id: string }>();
   const { user, loading } = useSession();
-
   const canEdit = useCanEditSkills(userId, user);
 
   if (loading) {
@@ -20,13 +20,4 @@ export default function UserSkillsPage() {
   }
 
   return <UserSkillsWidget userId={userId} canEdit={canEdit} />;
-}
-
-function useCanEditSkills(profileUserId: string, currentUser: any): boolean {
-  if (!currentUser) return false;
-
-  if (currentUser.role === 'Admin') {
-    return true;
-  }
-  return currentUser.id === profileUserId;
 }
