@@ -4,17 +4,15 @@ import { Alert, Box, Button, CircularProgress, Typography } from '@mui/material'
 import { useMemo } from 'react';
 
 import { Skill } from '@/entities/skills/model/types';
-import { DeleteSkillsDialog, SkillGroup } from '@/features/delete-skill/DeleteSkillsDialog';
-import { SkillDialog, SkillOption } from '@/features/skill-dialog/SkillDialog';
+import { DeleteSkillsDialog } from '@/features/delete-skill/DeleteSkillsDialog';
+import { SkillDialog } from '@/features/skill-dialog/SkillDialog';
 import { SkillMasteryBar } from '@/features/skill-mastery/SkillMasteryBar';
 import { useUserSkills } from './hooks/useUserSkills';
 import { useSkillDialogs } from './hooks/useSkillDialogs';
 import * as styles from './UserSkillsWidget.styles';
-
-interface UserSkillsWidgetProps {
-  userId: string;
-  canEdit: boolean;
-}
+import { SkillOption } from '@/features/skill-dialog/SkillDialog.types';
+import { SkillGroup } from '@/features/delete-skill/DeleteSkillsDialog.types';
+import { UserSkillsWidgetProps } from './UserSkillsWidget.types';
 
 export const UserSkillsWidget = ({ userId, canEdit }: UserSkillsWidgetProps) => {
   const {

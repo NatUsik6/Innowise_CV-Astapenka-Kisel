@@ -27,17 +27,7 @@ import {
     languageNameSx,
 } from './DeleteLanguagesDialog.styles';
 
-export interface LanguageEntry {
-    name: string;
-    proficiency: Proficiency;
-}
-
-interface DeleteLanguagesDialogProps {
-    open: boolean;
-    languages: LanguageEntry[];
-    onConfirm: (languageNames: string[]) => void;
-    onCancel: () => void;
-}
+import { DeleteLanguagesDialogProps } from './DeleteLanguagesDialog.types';
 
 export const DeleteLanguagesDialog = ({
     open,

@@ -1,33 +1,22 @@
 import { LanguageProficiency, Language } from '../model/types';
 
+interface ProfileWithLanguages {
+    id: string;
+    languages: LanguageProficiency[];
+}
+
+type MutationResult<TKey extends string, TData> = Record<TKey, TData>;
+
 export interface ProfileLanguagesResult {
-    profile: {
-        id: string;
-        languages: LanguageProficiency[];
-    };
+    profile: ProfileWithLanguages;
 }
 
 export interface LanguagesResult {
     languages: Language[];
 }
 
-export interface AddProfileLanguageResult {
-    addProfileLanguage: {
-        id: string;
-        languages: LanguageProficiency[];
-    };
-}
+export type AddProfileLanguageResult = MutationResult<'addProfileLanguage', ProfileWithLanguages>;
 
-export interface UpdateProfileLanguageResult {
-    updateProfileLanguage: {
-        id: string;
-        languages: LanguageProficiency[];
-    };
-}
+export type UpdateProfileLanguageResult = MutationResult<'updateProfileLanguage', ProfileWithLanguages>;
 
-export interface DeleteProfileLanguageResult {
-    deleteProfileLanguage: {
-        id: string;
-        languages: LanguageProficiency[];
-    };
-}
+export type DeleteProfileLanguageResult = MutationResult<'deleteProfileLanguage', ProfileWithLanguages>;

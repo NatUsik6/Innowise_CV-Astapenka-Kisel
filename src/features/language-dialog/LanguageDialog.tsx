@@ -20,27 +20,7 @@ import {
     cancelButtonSx,
     confirmButtonSx,
 } from './LanguageDialog.styles';
-
-export interface LanguageOption {
-    id: string;
-    name: string;
-    native_name?: string | null;
-}
-
-export interface LanguageDialogValue {
-    name: string;
-    proficiency: Proficiency;
-}
-
-interface LanguageDialogProps {
-    open: boolean;
-    mode: 'add' | 'update';
-    languages: LanguageOption[];
-    assignedLanguageNames?: string[];
-    initialValue?: LanguageDialogValue;
-    onConfirm: (value: LanguageDialogValue) => void;
-    onCancel: () => void;
-}
+import { LanguageDialogProps } from './LanguageDialog.types';
 
 const PROFICIENCY_OPTIONS = Object.values(Proficiency);
 

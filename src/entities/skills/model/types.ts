@@ -29,21 +29,18 @@ export interface SkillMastery {
   mastery: Mastery;
 }
 
-export interface AddProfileSkillInput {
+interface BaseSkillInput {
   userId: string;
   name: string;
+}
+
+export interface AddProfileSkillInput extends BaseSkillInput {
   categoryId?: string | null;
   mastery: Mastery;
 }
 
-export interface UpdateProfileSkillInput {
-  userId: string;
-  name: string;
-  categoryId?: string | null;
-  mastery: Mastery;
-}
+export type UpdateProfileSkillInput = AddProfileSkillInput;
 
-export interface DeleteProfileSkillInput {
-  userId: string;
+export interface DeleteProfileSkillInput extends Pick<BaseSkillInput, 'userId'> {
   name: string[];
 }

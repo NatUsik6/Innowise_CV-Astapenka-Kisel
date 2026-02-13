@@ -14,28 +14,7 @@ import { useSkillDialogState } from './useSkillDialogState';
 
 import * as styles from './SkillDialog.styles';
 import { StyledSelect } from '@/shared/ui/users/inputs/StyledSelect';
-
-export interface SkillOption {
-  id: string;
-  name: string;
-  categoryId: string | null;
-}
-
-export interface SkillDialogValue {
-  name: string;
-  categoryId: string | null;
-  mastery: Mastery;
-}
-
-interface SkillDialogProps {
-  open: boolean;
-  mode: 'add' | 'update';
-  skills: SkillOption[];
-  assignedSkillNames?: string[];
-  initialValue?: SkillDialogValue;
-  onConfirm: (value: SkillDialogValue) => void;
-  onCancel: () => void;
-}
+import { SkillDialogProps } from './SkillDialog.types';
 
 const MASTERY_OPTIONS = Object.values(Mastery);
 

@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { LanguageProficiency } from '@/entities/languages/model/types';
-import { LanguageDialogValue } from '@/features/language-dialog/LanguageDialog';
-
-interface UseLanguageDialogsProps {
-    userId: string;
-    addLanguage: (options: any) => Promise<any>;
-    updateLanguage: (options: any) => Promise<any>;
-    deleteLanguages: (options: any) => Promise<any>;
-}
+import { LanguageDialogValue } from '@/features/language-dialog/LanguageDialog.types';
+import { UseLanguageDialogsProps } from './useLanguageDialogs.types';
 
 export const useLanguageDialogs = ({
     userId,

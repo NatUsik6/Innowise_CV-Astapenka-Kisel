@@ -5,16 +5,13 @@ import { useMemo } from 'react';
 
 import { Language } from '@/entities/languages/model/types';
 import { DeleteLanguagesDialog } from '@/features/delete-language/DeleteLanguagesDialog';
-import { LanguageDialog, LanguageOption } from '@/features/language-dialog/LanguageDialog';
+import { LanguageDialog } from '@/features/language-dialog/LanguageDialog';
 import { useUserLanguages } from './hooks/useUserLanguages';
 import { useLanguageDialogs } from './hooks/useLanguageDialogs';
 import * as styles from './UserLanguagesWidget.styles';
 import { LanguageProficiencyBar } from '@/features/language-proficiency/LanguageProficiencyBar';
-
-interface UserLanguagesWidgetProps {
-    userId: string;
-    canEdit: boolean;
-}
+import { LanguageOption } from '@/features/language-dialog/LanguageDialog.types';
+import { UserLanguagesWidgetProps } from './UserLanguagesWidget.types';
 
 export const UserLanguagesWidget = ({
     userId,

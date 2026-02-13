@@ -21,19 +21,17 @@ export interface LanguageProficiency {
     proficiency: Proficiency;
 }
 
-export interface AddProfileLanguageInput {
+interface BaseLanguageInput {
     userId: string;
     name: string;
+}
+
+export interface AddProfileLanguageInput extends BaseLanguageInput {
     proficiency: Proficiency;
 }
 
-export interface UpdateProfileLanguageInput {
-    userId: string;
-    name: string;
-    proficiency: Proficiency;
-}
+export type UpdateProfileLanguageInput = AddProfileLanguageInput;
 
-export interface DeleteProfileLanguageInput {
-    userId: string;
+export interface DeleteProfileLanguageInput extends Pick<BaseLanguageInput, 'userId'> {
     name: string[];
 }
