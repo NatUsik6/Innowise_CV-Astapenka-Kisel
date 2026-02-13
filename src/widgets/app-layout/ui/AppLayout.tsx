@@ -28,7 +28,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
-  const displayName = user?.profile?.firstName 
+  const displayName = user?.profile?.firstName
     ? `${user.profile.firstName} ${user.profile.lastName || ''}`.trim()
     : user?.email;
 
@@ -39,34 +39,54 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
   if (!mounted) {
     return <div style={{ visibility: "hidden" }}>{children}</div>;
   }
+  const isOnSkillsPage = pathname.includes('/skills');
+  const isOnLanguagesPage = pathname.includes('/languages');
+
+  const handleSkillsClick = () => {
+    if (user?.id) {
+      router.push(ROUTES.USER_SKILLS(user.id));
+    }
+  };
+
+  const handleLanguagesClick = () => {
+    if (user?.id) {
+      router.push(ROUTES.USER_LANGUAGES(user.id));
+    }
+  };
   return (
     <RootWrapper>
       <SidebarWrapper>
         <Box>
           <List sx={{ p: 0 }}>
-          <NavItem 
-            selected={pathname === ROUTES.USERS}
-            onClick={() => router.push(ROUTES.USERS)}
-          >
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Employees" />
-          </NavItem>
-            <NavItem>
+            <NavItem
+              selected={pathname === ROUTES.USERS}
+              onClick={() => router.push(ROUTES.USERS)}
+            >
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Employees" />
+            </NavItem>
+            <NavItem
+              selected={isOnSkillsPage}
+              onClick={handleSkillsClick}
+              disabled={!user}>
               <ListItemIcon>
                 <MovingIcon />
               </ListItemIcon>
               <ListItemText primary="Skills" />
             </NavItem>
-            <NavItem>
+            <NavItem
+              selected={isOnLanguagesPage}
+              onClick={handleLanguagesClick}
+              disabled={!user}>
               <ListItemIcon>
                 <TranslateIcon />
               </ListItemIcon>
               <ListItemText primary="Languages" />
             </NavItem>
-            <NavItem 
-              selected={pathname === ROUTES.CVS} 
+            <NavItem
+              selected={pathname === ROUTES.CVS}
               onClick={() => router.push(ROUTES.CVS)}
             >
               <ListItemIcon><ContactPageIcon /></ListItemIcon>

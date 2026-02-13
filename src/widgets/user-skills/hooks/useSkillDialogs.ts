@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { SkillMastery } from '@/entities/skills/model/types';
-import { SkillDialogValue } from '@/features/skill-dialog/SkillDialog';
-
-interface UseSkillDialogsProps {
-  userId: string;
-  addSkill: (options: any) => Promise<any>;
-  updateSkill: (options: any) => Promise<any>;
-  deleteSkills: (options: any) => Promise<any>;
-}
+import { SkillDialogValue } from '@/features/skill-dialog/SkillDialog.types';
+import { UseSkillDialogsProps } from './useSkillDialogs.types';
 
 export const useSkillDialogs = ({
   userId,

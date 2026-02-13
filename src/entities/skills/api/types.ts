@@ -1,10 +1,14 @@
 import { SkillMastery, Skill, SkillCategory } from '../model/types';
 
+interface ProfileWithSkills {
+  id: string;
+  skills: SkillMastery[];
+}
+
+type MutationResult<TKey extends string, TData> = Record<TKey, TData>
+
 export interface ProfileSkillsResult {
-  profile: {
-    id: string;
-    skills: SkillMastery[];
-  };
+  profile: ProfileWithSkills;
 }
 
 export interface SkillsResult {
@@ -15,23 +19,8 @@ export interface SkillCategoriesResult {
   skillCategories: SkillCategory[];
 }
 
-export interface AddProfileSkillResult {
-  addProfileSkill: {
-    id: string;
-    skills: SkillMastery[];
-  };
-}
+export type AddProfileSkillResult = MutationResult<'addProfileSkill', ProfileWithSkills>;
 
-export interface UpdateProfileSkillResult {
-  updateProfileSkill: {
-    id: string;
-    skills: SkillMastery[];
-  };
-}
+export type UpdateProfileSkillResult = MutationResult<'updateProfileSkill', ProfileWithSkills>;
 
-export interface DeleteProfileSkillResult {
-  deleteProfileSkill: {
-    id: string;
-    skills: SkillMastery[];
-  };
-}
+export type DeleteProfileSkillResult = MutationResult<'deleteProfileSkill', ProfileWithSkills>;

@@ -14,23 +14,7 @@ import { Mastery } from '@/entities/skills/model/types';
 import { SkillCategorySection } from './SkillCategorySection';
 
 import * as styles from './DeleteSkillsDialog.styles';
-
-export interface SkillEntry {
-  name: string;
-  mastery: Mastery;
-}
-
-export interface SkillGroup {
-  categoryName: string;
-  skills: SkillEntry[];
-}
-
-interface DeleteSkillsDialogProps {
-  open: boolean;
-  skillGroups: SkillGroup[];
-  onConfirm: (skillNames: string[]) => void;
-  onCancel: () => void;
-}
+import { DeleteSkillsDialogProps } from './DeleteSkillsDialog.types';
 
 export const DeleteSkillsDialog = ({
   open,
