@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Mastery } from '@/entities/skills/model/types';
-import { SkillDialogValue } from './SkillDialog';
+import { SkillDialogValue } from './SkillDialog.types';
 
 export const useSkillDialogState = (
   open: boolean,
