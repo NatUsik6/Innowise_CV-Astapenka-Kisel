@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Proficiency } from '@/entities/languages/model/types';
-import { LanguageDialogValue } from './LanguageDialog';
+import { LanguageDialogValue } from './LanguageDialog.types';
 
 export const useLanguageDialogState = (
     open: boolean,
