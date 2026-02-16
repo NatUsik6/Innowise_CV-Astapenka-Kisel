@@ -6,13 +6,19 @@ import { CvRowItem } from './CvRowItem';
 import { tableContainerSx, combinedHeadCellSx, sortableHeaderCellSx, arrowSx } from './CvsTable.styles';
 import { useMemo, useState } from 'react';
 
+export enum SortOrder {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
 interface Props {
   cvs: CV[];
   search: string;
+  renderActions?: (cv: CV) => React.ReactNode;
 }
 
-export const CvsTable = ({ cvs, search, renderActions }: Props & { renderActions?: (cv: CV) => React.ReactNode }) => {
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+export const CvsTable = ({ cvs, search, renderActions }: Props) => {
+  const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.ASC);
   const sortField = 'name';
 
   const filteredAndSortedCvs = useMemo(() => {
@@ -23,19 +29,19 @@ export const CvsTable = ({ cvs, search, renderActions }: Props & { renderActions
 
     return [...filtered].sort((a, b) => {
       const result = a.name.localeCompare(b.name);
-      return sortOrder === 'asc' ? result : -result;
+      return sortOrder === SortOrder.ASC ? result : -result;
     });
   }, [cvs, search, sortOrder]);
 
   const handleSortToggle = () => {
-    setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    setSortOrder((prev) => (prev === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC));
   };
 
   const renderArrow = (field: string) => {
     const isSelected = sortField === field;
     return (
       <Box component="span" sx={arrowSx}>
-        {isSelected ? (sortOrder === 'asc' ? '↑' : '↓') : '↑↓'}
+        {isSelected ? (sortOrder === SortOrder.ASC ? '↑' : '↓') : '↑↓'}
       </Box>
     );
   };
