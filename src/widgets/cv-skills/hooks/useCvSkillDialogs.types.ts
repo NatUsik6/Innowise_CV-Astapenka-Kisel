@@ -11,30 +11,22 @@ import {
     DeleteCvSkillInput,
 } from '@/entities/cv-skills/model/types';
 
-type AddSkillMutation = (options: {
-    variables: {
-        skill: AddCvSkillInput;
-    };
-}) => Promise<FetchResult<AddCvSkillResult>>;
-
-type UpdateSkillMutation = (options: {
-    variables: {
-        skill: UpdateCvSkillInput;
-    };
-}) => Promise<FetchResult<UpdateCvSkillResult>>;
-
-type DeleteSkillsMutation = (options: {
-    variables: {
-        skill: DeleteCvSkillInput;
-    };
-}) => Promise<FetchResult<DeleteCvSkillResult>>;
+type MutationFn<TInput, TResult> = (options: {
+    variables: { skill: TInput };
+}) => Promise<FetchResult<TResult>>;
 
 export interface UseCvSkillDialogsProps {
     cvId: string;
-    addSkill: AddSkillMutation;
-    updateSkill: UpdateSkillMutation;
-    deleteSkills: DeleteSkillsMutation;
+    addSkill: MutationFn<AddCvSkillInput, AddCvSkillResult>;
+    updateSkill: MutationFn<UpdateCvSkillInput, UpdateCvSkillResult>;
+    deleteSkills: MutationFn<DeleteCvSkillInput, DeleteCvSkillResult>;
 }
+
+type SkillDialogValue = {
+    name: string;
+    categoryId: string | null;
+    mastery: Mastery;
+};
 
 export interface UseCvSkillDialogsReturn {
     addOpen: boolean;
@@ -43,10 +35,10 @@ export interface UseCvSkillDialogsReturn {
     deleteOpen: boolean;
     setDeleteOpen: (open: boolean) => void;
     editingSkill: SkillMastery | null;
-    handleAddConfirm: (value: { name: string; categoryId: string | null; mastery: Mastery }) => Promise<void>;
+    handleAddConfirm: (value: SkillDialogValue) => Promise<void>;
     handleAddCancel: () => void;
     openUpdate: (skill: SkillMastery) => void;
-    handleUpdateConfirm: (value: { name: string; categoryId: string | null; mastery: Mastery }) => Promise<void>;
+    handleUpdateConfirm: (value: SkillDialogValue) => Promise<void>;
     handleUpdateCancel: () => void;
     handleDeleteConfirm: (names: string[]) => Promise<void>;
     handleDeleteCancel: () => void;
