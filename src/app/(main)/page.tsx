@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/entities/session/model/useSession';
+import { ROUTES } from '@/shared/constants/routes';
 
 export default function RootPage() {
   const router = useRouter();
@@ -11,9 +12,9 @@ export default function RootPage() {
   useEffect(() => {
     if (!loading) {
       if (isAuthenticated) {
-        router.push('/users');
+        router.push(ROUTES.USERS);
       } else {
-        router.push('/login');
+        router.push(ROUTES.LOGIN);
       }
     }
   }, [isAuthenticated, loading, router]);
