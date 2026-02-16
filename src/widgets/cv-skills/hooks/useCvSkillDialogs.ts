@@ -1,0 +1,87 @@
+import { useState } from 'react';
+import { SkillMastery } from '@/entities/skills/model/types';
+import { SkillDialogValue } from '@/features/skill-dialog/SkillDialog.types';
+import { UseCvSkillDialogsProps, UseCvSkillDialogsReturn } from './useCvSkillDialogs.types';
+
+export const useCvSkillDialogs = ({
+    cvId,
+    addSkill,
+    updateSkill,
+    deleteSkills,
+}: UseCvSkillDialogsProps): UseCvSkillDialogsReturn => {
+    const [addOpen, setAddOpen] = useState(false);
+    const [updateOpen, setUpdateOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [editingSkill, setEditingSkill] = useState<SkillMastery | null>(null);
+
+    const handleAddConfirm = async (value: SkillDialogValue) => {
+        await addSkill({
+            variables: {
+                skill: {
+                    cvId,
+                    name: value.name,
+                    categoryId: value.categoryId,
+                    mastery: value.mastery,
+                },
+            },
+        });
+        setAddOpen(false);
+    };
+
+    const openUpdate = (skill: SkillMastery) => {
+        setEditingSkill(skill);
+        setUpdateOpen(true);
+    };
+
+    const handleUpdateConfirm = async (value: SkillDialogValue) => {
+        await updateSkill({
+            variables: {
+                skill: {
+                    cvId,
+                    name: value.name,
+                    categoryId: value.categoryId,
+                    mastery: value.mastery,
+                },
+            },
+        });
+        setUpdateOpen(false);
+        setEditingSkill(null);
+    };
+
+    const handleDeleteConfirm = async (names: string[]) => {
+        await deleteSkills({
+            variables: {
+                skill: {
+                    cvId,
+                    name: names,
+                },
+            },
+        });
+        setDeleteOpen(false);
+    };
+
+    const handleAddCancel = () => setAddOpen(false);
+
+    const handleUpdateCancel = () => {
+        setUpdateOpen(false);
+        setEditingSkill(null);
+    };
+
+    const handleDeleteCancel = () => setDeleteOpen(false);
+
+    return {
+        addOpen,
+        setAddOpen,
+        updateOpen,
+        deleteOpen,
+        setDeleteOpen,
+        editingSkill,
+        handleAddConfirm,
+        handleAddCancel,
+        openUpdate,
+        handleUpdateConfirm,
+        handleUpdateCancel,
+        handleDeleteConfirm,
+        handleDeleteCancel,
+    };
+};
