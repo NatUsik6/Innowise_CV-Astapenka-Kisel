@@ -11,11 +11,21 @@ import { CV, CvsApiResponse } from '@/entities/cv/model/cvs.types';
 import { mapCvsFromAPI } from '@/entities/cv/model/mapper';
 import { Toolbar } from '@/app/users/UsersPageClient.styles';
 import { StatusText } from '@/shared/ui/users/StatusText/StatusText.styles';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { CvsTable } from '@/widgets/cvs-table/ui/CvsTable';
 import { useDebounce } from '@/shared/lib/hooks/useDebounce';
-import { actionButtonSx } from '@/app/widgets/users-table/user/UserUsersTable.styles';
+import { CreateCvModal } from '@/features/cv-create/ui/CreateCvModal';
+import { actionButtonSx } from '@/widgets/cvs-table/ui/CvsTable.styles';
+import { UpdateCvModal } from '@/features/cv-update/ui/UpdateCvModal';
+import { DeleteCvModal } from '@/features/cv-delete/ui/DeleteCvModal';
+
+enum ModalType {
+  NONE = 'NONE',
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+}
 
 export const CvsPageClient = () => {
   const router = useRouter();
@@ -24,11 +34,12 @@ export const CvsPageClient = () => {
   const debouncedSearch = useDebounce(search, 400);
   const [mounted, setMounted] = useState(false);
   const { data, loading: cvsLoading } = useQuery<CvsApiResponse>(CVS_QUERY);
+  const [activeModal, setActiveModal] = useState<ModalType>(ModalType.NONE);
+  const [selectedCv, setSelectedCv] = useState<CV | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      setMounted(true);
-    });
+    const frame = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(frame);
   }, []);
 
@@ -38,6 +49,26 @@ export const CvsPageClient = () => {
     }
   }, [user, sessionLoading, mounted, router]);
 
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, cv: CV) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setSelectedCv(cv);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const openModal = (type: ModalType) => {
+    setActiveModal(type);
+    handleCloseMenu();
+  };
+
+  const closeModal = () => {
+    setActiveModal(ModalType.NONE);
+    setSelectedCv(null);
+  };
+
   const renderCvActions = useCallback((cv: CV) => {
     const isAdmin = user?.role === 'Admin';
     const isOwner = user?.id === cv.user.id;
@@ -45,26 +76,13 @@ export const CvsPageClient = () => {
     if (!isAdmin && !isOwner) return null;
 
     return (
-      <IconButton 
-        size="small" 
-        sx={actionButtonSx} 
-        onClick={(e) => {
-          e.stopPropagation();
-          console.log('Open menu for CV:', cv.id);
-        }}
-      >
+      <IconButton size="small" sx={actionButtonSx} onClick={(e) => handleOpenMenu(e, cv)}>
         <MoreVertIcon fontSize="small" />
       </IconButton>
     );
   }, [user]);
 
-  const handleOpenCreate = useCallback(() => {
-    console.log('Open Create CV Modal');
-  }, []);
-
-  if (!mounted) {
-    return null; 
-  }
+  if (!mounted) return null;
 
   const cvs = data ? mapCvsFromAPI(data.cvs) : [];
 
@@ -72,7 +90,7 @@ export const CvsPageClient = () => {
     <>
       <Toolbar>
         <SearchInput value={search} onChange={setSearch} />
-        <CreateCvButton onClick={handleOpenCreate} />
+        <CreateCvButton onClick={() => openModal(ModalType.CREATE)} />
       </Toolbar>
 
       <Box sx={{ mt: 2 }}>
@@ -86,6 +104,43 @@ export const CvsPageClient = () => {
           />
         )}
       </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <MenuItem onClick={() => openModal(ModalType.UPDATE)}>Edit</MenuItem>
+        <MenuItem 
+          onClick={() => openModal(ModalType.DELETE)} 
+          sx={{ color: '#e53935' }}
+        >
+          Delete
+        </MenuItem>
+      </Menu>
+
+      <CreateCvModal 
+        open={activeModal === ModalType.CREATE} 
+        onClose={closeModal} 
+        userId={user?.id || ''} 
+      />
+
+      {selectedCv && (
+        <>
+          <UpdateCvModal 
+            open={activeModal === ModalType.UPDATE} 
+            onClose={closeModal} 
+            cv={selectedCv} 
+          />
+          <DeleteCvModal 
+            open={activeModal === ModalType.DELETE} 
+            onClose={closeModal} 
+            cvId={selectedCv.id} 
+            cvName={selectedCv.name} 
+          />
+        </>
+      )}
     </>
   );
 };
