@@ -2,6 +2,7 @@ import { BreadcrumbLink, BreadcrumbLinkText, BreadcrumbRoot, ChevronIcon, CrumbT
 import {
     CvLink,
 } from './CvBreadcrumb.styles';
+import { ROUTES } from '@/shared/constants/routes';
 
 
 interface Props {
@@ -22,7 +23,7 @@ export const CvBreadcrumb = ({ cvId, cvName, currentPage }: Props) => {
 
     return (
         <BreadcrumbRoot>
-            <BreadcrumbLink href="/cvs">
+            <BreadcrumbLink href={ROUTES.CVS}>
                 <BreadcrumbLinkText variant="h5">CVs</BreadcrumbLinkText>
             </BreadcrumbLink>
 

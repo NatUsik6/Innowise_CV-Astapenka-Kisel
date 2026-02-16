@@ -5,12 +5,11 @@ interface SessionUser {
     role: UserRole;
 }
 
-export const useCanEditCv = (
-    cvOwnerId: string | undefined,
+export const useCanEdit = (
+    ownerId: string | undefined,
     user: SessionUser | null,
 ): boolean => {
     if (!user) return false;
     if (user.role === 'Admin') return true;
-    return user.id === cvOwnerId;
+    return ownerId ? user.id === ownerId : false;
 };
-

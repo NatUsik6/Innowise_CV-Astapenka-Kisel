@@ -3,16 +3,16 @@
 import { useParams } from 'next/navigation';
 import { CvSkillsWidget } from '@/widgets/cv-skills/CvSkillsWidget';
 import { useSession } from '@/entities/session/model/useSession';
-import { useCanEditCvSkills } from './hooks/useCanEditCvSkills';
 import { Box, CircularProgress } from '@mui/material';
 import { useCv } from './hooks/useCv';
+import { useCanEdit } from '@/shared/hooks/useCanEdit';
 
 export default function CvSkillsPage() {
     const { id: cvId } = useParams<{ id: string }>();
     const { user, loading: sessionLoading } = useSession();
     const { cv, loading: cvDataLoading } = useCv({ cvId });
 
-    const canEdit = useCanEditCvSkills(cv?.user?.id, user);
+    const canEdit = useCanEdit(cv?.user?.id, user);
 
     if (sessionLoading || cvDataLoading) {
         return (
