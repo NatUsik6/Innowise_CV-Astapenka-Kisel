@@ -16,9 +16,31 @@ export interface CV extends BaseCV {
 }
 
 export interface CvsApiResponse {
-    cvs: CVAPI[];
+  cvs: CVAPI[];
 }
 
 export interface CvsData {
-    cvs: CV[];
+  cvs: CV[];
+}
+
+export interface CreateCvInput {
+  name: string;
+  education?: string;
+  description?: string;
+  userId: string;
+}
+
+export interface UpdateCvInput {
+  cvId: string;
+  name?: string;
+  education?: string;
+  description?: string;
+}
+
+export interface DeleteCvInput {
+  cvId: string;
+}
+
+export interface DeleteResult {
+  affected: number;
 }

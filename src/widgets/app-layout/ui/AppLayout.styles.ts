@@ -18,7 +18,7 @@ export const SidebarWrapper = styled(Box)({
   padding: '2.75rem 0 1rem 0',
 });
 
-export const NavItem = styled(ListItemButton)(({ theme }) => ({
+export const NavItem = styled(ListItemButton)(({}) => ({
   paddingLeft: '1rem',
   marginBottom: '0.875rem',
   minHeight: '3rem',
