@@ -10,6 +10,8 @@ import {
   actionButtonSx,
   rowDataGridSx
 } from './CvsTable.styles';
+import { truncateText } from '@/shared/lib/utils/truncateText';
+import { useState } from 'react';
 
 interface CvRowItemProps {
   cv: CV;
@@ -17,8 +19,12 @@ interface CvRowItemProps {
 }
 
 export const CvRowItem = ({ cv, renderActions }: CvRowItemProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   return (
-    <Box sx={rowWrapperSx}>
+    <Box 
+      sx={rowWrapperSx}
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
       <Box sx={rowDataGridSx}>
         <Typography sx={dataTextSx}>{cv.name}</Typography>
         <Typography sx={dataTextSx}>{cv.education}</Typography>
@@ -36,7 +42,7 @@ export const CvRowItem = ({ cv, renderActions }: CvRowItemProps) => {
         </Box>
       </Box>
       <Typography sx={descriptionTextSx}>
-        {cv.description}
+        {isExpanded ? cv.description : truncateText(cv.description, 200)}
       </Typography>
     </Box>
   );
