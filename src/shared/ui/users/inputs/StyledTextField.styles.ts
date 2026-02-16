@@ -58,4 +58,12 @@ export const getTextFieldStyles = (focusColor: string) => ({
       WebkitTextFillColor: disabledTextColor,
     },
   },
+  '& textarea': {
+    color: textColor,
+
+    '&.Mui-disabled': {
+      color: disabledTextColor,
+      WebkitTextFillColor: disabledTextColor,
+    },
+  },
 });
